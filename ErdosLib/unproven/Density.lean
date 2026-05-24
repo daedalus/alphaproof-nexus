@@ -64,12 +64,69 @@ lemma subset_upperDensity_le {A B : Set ℕ} (h : A ⊆ B) : upperDensity A ≤ 
   exact hA
 
 /-- Finite sets have density 0. -/
-lemma finite_has_density_zero {A : Set ℕ} (hA : A.Finite) : HasDensity A 0 := by
-  rw [hasDensity_iff]
-  intro ε hε
-  have h_card : A.card = (Finset.filter (λ k => k ∈ A) (Finset.range (A.card + 1))).card := by
-    sorry
-  sorry
+lemma finite_has_density_zero {S : Set ℕ} (hS : S.Finite) : HasDensity S 0 := by
+  dsimp [HasDensity]
+  have hS_bdd : ∃ M : ℕ, ∀ x ∈ S, x ≤ M := by
+    by_cases h_empty : S = ∅
+    · subst h_empty; exact ⟨0, λ x hx => False.elim hx⟩
+    · have h_nonempty : (hS.toFinset).Nonempty := by
+        rcases Set.nonempty_iff_ne_empty.mpr h_empty with ⟨x, hx⟩
+        exact ⟨x, hS.mem_toFinset.mpr hx⟩
+      refine ⟨hS.toFinset.max' h_nonempty, λ x hx => ?_⟩
+      have hx' : x ∈ hS.toFinset := hS.mem_toFinset.mpr hx
+      exact Finset.le_max' hS.toFinset x hx'
+  rcases hS_bdd with ⟨M, hM⟩
+  have hcard_stable : ∀ n ≥ M, (Finset.filter (λ k => k ∈ S) (Finset.range (n+1))).card = (hS.toFinset).card := by
+    intro n hn
+    have h_eq : (Finset.filter (λ k => k ∈ S) (Finset.range (n+1))) = hS.toFinset := by
+      ext x; constructor
+      · intro hx; exact hS.mem_toFinset.mpr (by simpa [Finset.mem_filter] using hx)
+      · intro hx
+        have hx_S : x ∈ S := hS.mem_toFinset.mp hx
+        have hx_le_n : x ≤ n := le_trans (hM x hx_S) hn
+        refine Finset.mem_filter.mpr ⟨Finset.mem_range.mpr (by omega), hx_S⟩
+    simp [h_eq]
+  have h_nonneg : ∀ n : ℕ, 0 ≤ ((Finset.filter (λ k => k ∈ S) (Finset.range (n+1))).card : ℝ) / (n : ℝ) := by
+    intro n; positivity
+  have h_upper : ∀ n : ℕ, ((Finset.filter (λ k => k ∈ S) (Finset.range (n+1))).card : ℝ) / (n : ℝ) ≤
+    ((hS.toFinset).card : ℝ) / (n : ℝ) := by
+    intro n
+    have h_card_le : (Finset.filter (λ k => k ∈ S) (Finset.range (n+1))).card ≤ (hS.toFinset).card := by
+      by_cases hnM : n ≥ M
+      · simp [hcard_stable n hnM]
+      · refine Finset.card_le_card (λ x hx => hS.mem_toFinset.mpr ?_)
+        simpa [Finset.mem_filter] using hx
+    exact (div_le_div_right (by positivity)).mpr (mod_cast h_card_le)
+  have h_zero : Tendsto (fun _ : ℕ => (0 : ℝ)) atTop (𝓝 0) := tendsto_const_nhds
+  have h_c_div_n : Tendsto (fun (n : ℕ) => ((hS.toFinset).card : ℝ) / (n : ℝ)) atTop (𝓝 0) := by
+    simpa [div_eq_mul_inv] using
+      (tendsto_const_nhds : Tendsto (λ _ : ℕ => ((hS.toFinset).card : ℝ)) atTop _).mul
+        (tendsto_inv_atTop.comp tendsto_natCast_atTop_atTop)
+  exact tendsto_of_tendsto_of_tendsto_of_le_of_le h_zero h_c_div_n h_nonneg h_upper
+
+/-- Alternate formulation of log density using Finset.Icc 1 N instead of range (n+1). -/
+noncomputable def S (A : Set ℕ) (N : ℕ) : ℝ :=
+  ∑ k in Finset.filter (λ k => k ∈ A) (Finset.Icc 1 N), (k : ℝ)⁻¹
+
+lemma S_equiv (A : Set ℕ) (d : ℝ) : HasLogDensity A d ↔
+    Tendsto (fun N : ℕ => S A N / Real.log (N : ℝ)) atTop (𝓝 d) := by
+  dsimp [HasLogDensity, S]
+  constructor
+  · intro h; simpa [Finset.Icc, Finset.range_succ] using h
+  · intro h; simpa [Finset.Icc, Finset.range_succ] using h
+
+/-- Inequality: y/(1+y) ≤ log(1+y) for y > -1, y ≠ 0. -/
+lemma log_one_add_x_ge_x_div_one_add_x {y : ℝ} (hy : y > -1) (hy0 : y ≠ 0) : y / (1 + y) ≤ Real.log (1 + y) := by
+  have hx : 1 / (1 + y) > 0 := by
+    refine div_pos (by norm_num) (sub_pos.mpr ?_)
+    nlinarith
+  have h := Real.log_le_sub_one_of_pos hx
+  rw [Real.log_div, Real.log_one, sub_eq_add_neg, add_comm, ← sub_eq_add_neg] at h
+  have h' : 1 / (1 + y) - 1 = -(y / (1 + y)) := by
+    field_simp [show (1 + y) ≠ 0 from by nlinarith]
+    ring
+  rw [h'] at h
+  linarith
 
 /-- Natural density implies logarithmic density (via Abel summation). -/
 lemma nat_density_imp_log_density {A : Set ℕ} {d : ℝ} (h : HasDensity A d) : HasLogDensity A d := by

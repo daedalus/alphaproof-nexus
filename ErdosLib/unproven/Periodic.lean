@@ -75,11 +75,29 @@ lemma eventually_periodic_has_log_density (S : Set ℕ) (h : EventuallyPeriodic 
 lemma product_of_moduli_is_period (moduli : ℕ → ℕ) (residues : ℕ → ℤ) (k : ℕ) (hpos : ∀ i, 0 < moduli i) :
     EventuallyPeriodic { x : ℕ | ∀ i < k, ¬((x : ℤ) ≡ residues i [ZMOD moduli i]) } := by
   let L := ∏ i in Finset.range k, moduli i
+  have hL_dvd : ∀ i < k, (moduli i : ℤ) ∣ (L : ℤ) := by
+    intro i hi
+    apply Nat.cast_dvd.mpr
+    refine Finset.dvd_prod_of_mem (λ j => moduli j) (Finset.mem_range.mpr hi)
   refine ⟨0, L, λ x hx => ?_⟩
   constructor
   · intro h i hi
+    intro hcong
     apply h i hi
+    have h_mod : (x + L : ℤ) ≡ (x : ℤ) [ZMOD moduli i] :=
+      Int.ModEq.mpr (by
+        have : (x + L : ℤ) - (x : ℤ) = (L : ℤ) := by ring
+        rw [this]
+        exact hL_dvd i hi)
+    exact (h_mod.symm.trans hcong)
   · intro h i hi
+    intro hcong
     apply h i hi
+    have h_mod : (x : ℤ) ≡ (x + L : ℤ) [ZMOD moduli i] :=
+      Int.ModEq.mpr (by
+        have : (x : ℤ) - (x + L : ℤ) = -(L : ℤ) := by ring
+        rw [this]
+        exact dvd_neg.mpr (hL_dvd i hi))
+    exact (h_mod.trans hcong)
 
 end ErdosLib

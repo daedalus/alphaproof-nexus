@@ -1,16 +1,21 @@
 # AlphaProof Nexus — AGENTS.md
 
-Open conjecture: **Does every congruence-avoiding set have a logarithmic density?**
-(Erdos Problem #25, [erdosproblems.com/25](https://www.erdosproblems.com/25))
+Repository of Lean 4 formalizations for open Erdős problems, evolved via
+AlphaProof Nexus (arXiv:2605.22763) evolutionary proof search.
 
-This repo applies AlphaProof Nexus (arXiv:2605.22763) evolutionary proof search in Lean 4.
-Evolve a population of proof attempts; rate by "sorry" count and mathematical insight.
+Each problem lives in its own directory with a population of proof attempts
+rated by "sorry" count and mathematical insight.
 
 ## Quick start
 
 ```bash
-lean Erdos25-evolve/Erdos25.lean                    # Problem statement + stubs
-lean Erdos25-evolve/population/member_04_gen1_head_truncation.lean  # Champion
+# Erdos #25 — congruence-avoiding sets
+lean Erdos25-evolve/Erdos25.lean
+lean Erdos25-evolve/population/member_04_gen1_head_truncation.lean
+
+# Erdos #1 — sum-distinct sets
+lean Erdos1/Erdos1.lean
+lean Erdos1/population/member_05_champion.lean
 ```
 
 Requires Lean 4.29.1, `lean` on `PATH`.
@@ -18,21 +23,31 @@ Requires Lean 4.29.1, `lean` on `PATH`.
 ## File structure
 
 ```
-Erdos25.lean                              — Top-level problem (external FormalConjectures dep)
-Erdos25-evolve/
-  Erdos25.lean                            — Self-contained problem + HasLogDensity definition
-  population/                             — Generations of proof attempts
-    member_{NN}_{description}.lean        — Population member naming
-    member_{NN}_gen{G}_{description}.lean — Later-gen member naming
-ErdosLib/                                 — Reusable library (namespaced under ErdosLib)
-  Density.lean                            — HasDensity, HasLogDensity, upper/lower variants
-  Problem.lean                            — Answer type, research_open attribute
-  Periodic.lean, Truncation.lean, Summability.lean
+Erdos1/                                   — Problem directory for Erdős #1
+  Erdos1.lean                             — Problem statement + @[research_open] stub
+  population/member_{NN}_{desc}.lean      — Proof attempts
+Erdos25-evolve/                           — Problem directory for Erdős #25
+  Erdos25.lean                            — Self-contained problem + HasLogDensity
+  population/member_{NN}_{desc}.lean      — Proof attempts (may have gen{G} tags)
+ErdosLib/                                 — Shared library (namespace ErdosLib)
+  proven/                                 — Fully proven lemmas (0 sorries)
+    Problem.lean, SumDistinct.lean
+  unproven/                               — Lemmas with open sorries
+    Density.lean, Periodic.lean, Truncation.lean, Summability.lean
+Erdos25.lean                              — Top-level Erdos #25 (external FormalConjectures dep)
 ```
 
-## Population member conventions
+Each new problem gets its own `Erdos{N}/` directory with the same structure.
 
-Every population file begins with a header doc-comment:
+## Problem conventions
+
+Every problem has:
+- A namespace matching the problem (e.g. `Erdos1`, `Erdos25`)
+- A `@[research_open]` theorem (the main conjecture)
+- `-- EVOLVE-BLOCK-START` / `-- EVOLVE-BLOCK-END` markers around editable regions
+- `answer(sorry)` or direct `sorry` for the open part
+
+Every population member has a header doc-comment:
 
 ```lean
 /-
@@ -42,45 +57,58 @@ Every population file begins with a header doc-comment:
 -/
 ```
 
-Each file is self-contained (imports `Mathlib`), defines its own `HasLogDensity`, `A`, etc.
-EVOLVE-BLOCK-START / EVOLVE-BLOCK-END comments mark editable regions.
+Files are self-contained (import `Mathlib` only, no external deps).
+
+## How to add a new problem
+
+1. Create `Erdos{N}/Erdos{N}.lean` with the problem statement.
+2. Define namespace, types, the main `@[research_open]` theorem, and EVOLVE-BLOCK markers.
+3. Add a `population/` subdirectory.
+4. Add an entry to `ErdosLib/Problem.lean` if reusable types apply.
 
 ## How to add a new population member
 
-1. Pick a description and next number (scan `population/` for the highest `NN`).
-2. Create `Erdos25-evolve/population/member_{NN}_gen{G}_{description}.lean`.
+1. Scan the problem's `population/` for the highest `NN`.
+2. Create `member_{NN}_gen{G}_{description}.lean`.
 3. Copy the header block from an existing member; update Strategy, Approach, Rating.
-4. Import `Mathlib`, open `Filter` `Finset` `Real` `Set` `Topology`.
-5. Define `HasLogDensity`, `A`, `UniversalStatement` (match existing signature).
-6. Mark editable sections with `-- EVOLVE-BLOCK-START` / `-- EVOLVE-BLOCK-END`.
-7. Decorate the main theorem with `@[research_open]`.
-8. Compile with `lean` before considering it done.
+4. Import `Mathlib`, define relevant types (match problem signature).
+5. Mark editable sections with `-- EVOLVE-BLOCK-START` / `-- EVOLVE-BLOCK-END`.
+6. Decorate the main theorem with `@[research_open]`.
+7. Compile with `lean` before considering it done.
 
 ## How to use ErdosLib
 
 Reusable lemmas live in `ErdosLib/` under `namespace ErdosLib`:
-- `HasLogDensity`, `HasDensity`, `upperDensity`, `lowerDensity`
-- `hasDensity_iff`, `hasLogDensity_iff`, `nat_density_imp_log_density`
-- `A_from_seqs` set builder, `EventuallyPeriodic`, `A_head` truncation, `TailSumZero`
+- `HasLogDensity`, `HasDensity`, `upperDensity`, `lowerDensity`, `HasLogDensity`
+- `Answer` (`unknown` / `true` / `false`), `A_from_seqs`, `UniversalStatement`
+- `EventuallyPeriodic`, `A_head`, `TailSumZero`
+- `IsSumDistinctSet`, `subset_sums`, `trivial_bound`, `powers_of_two_set` (from `SumDistinct.lean`)
+- `active_constraints_finite`, `f`, `f_nonneg`, `f_le_one`, `mem_A_iff_f_zero` (from `Problem.lean`)
+- `finite_has_density_zero`, `S`, `S_equiv`, `log_one_add_x_ge_x_div_one_add_x` (from `Density.lean`)
 
-Import via `import ErdosLib` (not `import Mathlib` alone) when using library definitions.
-This isn't required — population members are self-contained and typically ignore ErdosLib.
+Import via `import ErdosLib` (e.g., in `ErdosLib/` submodules or cross-problem files).
+Submodule imports use the full path: `import ErdosLib.unproven.Density`, `import ErdosLib.proven.Problem`.
+Population members are self-contained and typically ignore ErdosLib.
 
 ## Rules
 
-❌ Don't write `HasLogDensity` / `A` / `UniversalStatement` with different signatures.
-✅ Keep signatures identical to `Erdos25-evolve/Erdos25.lean` for cross-comparison.
+❌ Don't write signatures that diverge from the problem's own `Erdos{N}.lean`.
+✅ Keep statements consistent for cross-comparison across members.
 
-❌ Don't remove EVOLVE-BLOCK markers — they delimit the agent-editable region.
+❌ Don't remove EVOLVE-BLOCK markers — they delimit the editable region.
 ✅ Put all new lemmas and proof attempts inside `-- EVOLVE-BLOCK-START/END`.
 
 ❌ Don't add external dependencies or `lakefile.lean`.
 ✅ Keep each file compilable via `lean <filename>` with only `import Mathlib`.
 
-❌ Don't change the `Answer` type or `research_open` attribute convention.
-✅ Use `Answer.known true` / `Answer.known false` / `answer(sorry)`.
+❌ Don't invent a new `Answer` type per problem.
+✅ Use `Answer.true` / `Answer.false` / `answer(sorry)` from `ErdosLib` if applicable,
+   or the problem's own inductive if self-contained.
 
-## Current champion
+## Current problems
 
-`member_04_gen1_head_truncation.lean` — Head-truncation approach, 10 `sorry`s.
-The key open condition: **tail sum Σ_{i>k} 1/n_i → 0 as k → ∞** determines the answer.
+| Problem | Dir | Members | Gens | Champion | Status |
+|---------|-----|---------|------|----------|--------|
+| #1 — sum-distinct sets | `Erdos1/` | 5 | 1 | `member_05_champion.lean` | Proof complete (0 sorries) |
+| #25 — congruence-avoiding sets | `Erdos25-evolve/` | 12 | 5 | `member_04_gen1_head_truncation.lean` | 10 sorries (1 mathematically open) |
+| #634 — triangle tilings | `Erdos634/` | 1 | 1 | `member_01_gen1_squares.lean` | Initial sketch (geometry) |

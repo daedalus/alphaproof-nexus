@@ -1,5 +1,5 @@
 import Mathlib
-import ErdosLib.Density
+import ErdosLib.unproven.Density
 
 /-!
 # Problem Structure
@@ -68,5 +68,41 @@ def UniversalLogDensityStatement : Prop :=
 /-- Universal statement for natural density (stronger assumption). -/
 def UniversalNaturalDensityStatement : Prop :=
   UniversalStatement HasDensity
+
+/-- The set of active constraints (those with n_i ≤ M) is finite because n_i grows at least as fast as i. -/
+lemma active_constraints_finite (seq_n : ℕ → ℕ) (hmono : StrictMono seq_n) (M : ℕ) :
+    {i | seq_n i ≤ M}.Finite := by
+  have h_id_le : ∀ i, seq_n i ≥ i := hmono.id_le
+  have hbound : {i | seq_n i ≤ M} ⊆ {i | i ≤ M} := by
+    intro i hi; exact le_trans (h_id_le i) hi
+  exact Set.Finite.subset (Set.finite_le_nat M) hbound
+
+
+
+/-- Indicator of whether modulus i blocks x: returns 1 if n_i ≤ x and x ≡ a_i (mod n_i), else 0. -/
+def f (seq_n : ℕ → ℕ) (seq_a : ℕ → ℤ) (i : ℕ) (x : ℕ) : ℝ :=
+  if h : seq_n i ≤ x ∧ ((x : ℤ) ≡ seq_a i [ZMOD seq_n i]) then 1 else 0
+
+lemma f_nonneg (seq_n : ℕ → ℕ) (seq_a : ℕ → ℤ) (i x : ℕ) : 0 ≤ f seq_n seq_a i x := by
+  dsimp [f]; split <;> norm_num
+
+lemma f_le_one (seq_n : ℕ → ℕ) (seq_a : ℕ → ℤ) (i x : ℕ) : f seq_n seq_a i x ≤ 1 := by
+  dsimp [f]; split <;> norm_num
+
+lemma mem_A_iff_f_zero (seq_n : ℕ → ℕ) (seq_a : ℕ → ℤ) (x : ℕ) :
+    x ∈ A_from_seqs seq_n seq_a ↔ ∀ i, f seq_n seq_a i x = 0 := by
+  dsimp [A_from_seqs, f]
+  constructor
+  · intro h i; rcases h i with (hlt | hne)
+    · by_cases hseq : seq_n i ≤ x
+      · exfalso; exact Nat.not_lt.mpr hseq hlt
+      · simp [hseq]
+    · simp [hne]
+  · intro h i
+    have hi := h i
+    dsimp at hi
+    split at hi
+    · exact Or.inr hi.2
+    · exact Or.inl (by omega)
 
 end ErdosLib
