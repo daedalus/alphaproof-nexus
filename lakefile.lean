@@ -13,3 +13,6 @@ lean_lib Erdos25 where
   srcDir := "Erdos25-evolve"
 lean_lib Erdos634 where
   srcDir := "Erdos634"
+lean_lib ErdosLib where
+  srcDir := "ErdosLib"
+

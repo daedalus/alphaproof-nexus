@@ -31,6 +31,7 @@ structure Tiling (T S : Triangle) (n : ℕ) where
   pieces : Finset Triangle
   card_eq : pieces.card = n
   all_congruent : ∀ t ∈ pieces, Congruent t S
+  area_eq : Finset.sum pieces (λ t => signed_area t) = signed_area T
 
 /-- The property that there exists a triangle tileable by n congruent triangles. -/
 def TriangleTilable (n : ℕ) : Prop :=
