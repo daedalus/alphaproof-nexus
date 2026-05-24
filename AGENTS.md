@@ -111,4 +111,4 @@ Population members are self-contained and typically ignore ErdosLib.
 |---------|-----|---------|------|----------|--------|
 | #1 — sum-distinct sets | `Erdos1/` | 5 | 1 | `member_05_champion.lean` | Proof complete (0 sorries) |
 | #25 — congruence-avoiding sets | `Erdos25-evolve/` | 12 | 5 | `member_04_gen1_head_truncation.lean` | 10 sorries (1 mathematically open) |
-| #634 — triangle tilings | `Erdos634/` | 5 | 5 | `member_05_gen5_all_pos.lean` | 0 errors, 3 sorries (formalization gap: weak Tiling definition makes `not_tilable_n` unprovable) |
+| #634 — triangle tilings | `Erdos634/` | 6 | 6 | `member_06_gen6_geometric_tiling.lean` | 0 errors, 3 sorries (GeometricTiling with subset_T+cover_T added; `not_tilable_7/11` still unprovable without pairwise_disjoint) |
