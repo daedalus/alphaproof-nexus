@@ -13,6 +13,10 @@ rated by "sorry" count and mathematical insight.
 lean Erdos25-evolve/Erdos25.lean
 lean Erdos25-evolve/population/member_04_gen1_head_truncation.lean
 
+# Erdos #634 — triangle tilings
+lean Erdos634/Erdos634.lean
+lean Erdos634/population/member_07_gen7_geometric_obstruction.lean
+
 # Erdos #1 — sum-distinct sets
 lean Erdos1/Erdos1.lean
 lean Erdos1/population/member_05_champion.lean
@@ -111,4 +115,4 @@ Population members are self-contained and typically ignore ErdosLib.
 |---------|-----|---------|------|----------|--------|
 | #1 — sum-distinct sets | `Erdos1/` | 5 | 1 | `member_05_champion.lean` | Proof complete (0 sorries) |
 | #25 — congruence-avoiding sets | `Erdos25-evolve/` | 12 | 5 | `member_04_gen1_head_truncation.lean` | 10 sorries (1 mathematically open) |
-| #634 — triangle tilings | `Erdos634/` | 6 | 6 | `member_06_gen6_geometric_tiling.lean` | 0 errors, 3 sorries (GeometricTiling with subset_T+cover_T added; `not_tilable_7/11` still unprovable without pairwise_disjoint) |
+| #634 — triangle tilings | `Erdos634/` | 7 | 7 | `member_07_gen7_geometric_obstruction.lean` | 0 errors, 3 sorries (member_07 exposes formalization gap: `tilable_all_pos` contradicts `not_tilable_7` under weak TriangleTilable; geometric obstruction lemmas restated under GeometricTriangleTilable) |
