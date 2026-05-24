@@ -195,6 +195,16 @@ def grid_triangles (k : ℕ) : Finset Triangle :=
 
 -- EVOLVE-BLOCK-START
 
+private lemma mul_lt_of_lt_div {a b d : ℝ} (hd : 0 < d) (h : a < b / d) : a * d < b := by
+  calc
+    a * d < (b / d) * d := mul_lt_mul_of_pos_right h hd
+    _ = b := by field_simp [hd.ne']
+
+private lemma lt_mul_of_div_lt {a b d : ℝ} (hd : 0 < d) (h : a / d < b) : a < b * d := by
+  calc
+    a = (a / d) * d := by field_simp [hd.ne']
+    _ < b * d := mul_lt_mul_of_pos_right h hd
+
 /-- Helper: (k*(k+1))/2 + k + 1 = ((k+1)*(k+2))/2. -/
 lemma triangular_succ (k : ℕ) : (k * (k + 1)) / 2 + k + 1 = ((k + 1) * (k + 2)) / 2 := by
   have h_even : Even (k * (k + 1)) := Nat.even_mul_succ_self k
@@ -733,14 +743,12 @@ lemma up_interior_ineqs (p : ℝ × ℝ) (i j k : ℕ) (hk : k > 0)
     rw [hx]
     have hα' : α' = 1 - β' - γ' := by linarith
     rw [hα']
-    field_simp [hk0ℝ]
-    ring
+    field_simp [hk0ℝ]; push_cast; ring_nf
   have hy' : p.2 = (j : ℝ) * Real.sqrt 3 / (2*(k : ℝ)) + γ' * Real.sqrt 3 / (2*(k : ℝ)) := by
     rw [hy]
     have hα' : α' = 1 - β' - γ' := by linarith
     rw [hα']
-    field_simp [hk0ℝ]
-    ring
+    field_simp [hk0ℝ]; push_cast; ring_nf
   have hk_pos : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
   have hβ_eq : equi_beta p = ((i : ℝ) + β') / (k : ℝ) := by
     dsimp [equi_beta]
@@ -784,14 +792,12 @@ lemma down_interior_ineqs (p : ℝ × ℝ) (i j k : ℕ) (hk : k > 0)
     rw [hx]
     have hα' : α' = 1 - β' - γ' := by linarith
     rw [hα']
-    field_simp [hk0ℝ]
-    ring
+    field_simp [hk0ℝ]; push_cast; ring_nf
   have hy' : p.2 = (j : ℝ) * Real.sqrt 3 / (2*(k : ℝ)) + (β' + γ') * Real.sqrt 3 / (2*(k : ℝ)) := by
     rw [hy]
     have hα' : α' = 1 - β' - γ' := by linarith
     rw [hα']
-    field_simp [hk0ℝ]
-    ring
+    field_simp [hk0ℝ]; push_cast; ring_nf
   have hk_pos : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
   have hβ_eq : equi_beta p = ((i : ℝ) + 1 - γ') / (k : ℝ) := by
     dsimp [equi_beta]
@@ -818,6 +824,7 @@ lemma down_interior_ineqs (p : ℝ × ℝ) (i j k : ℕ) (hk : k > 0)
   · rw [hγ_eq]; apply hdiv; nlinarith
   · rw [h_sum_eq]; apply hdiv; nlinarith
 
+set_option maxHeartbeats 800000 in
 /-- The grid triangulation is pairwise interior-disjoint. -/
 lemma grid_pairwise_disjoint (k : ℕ) (hk : k > 0) : PairwiseInteriorDisjoint (grid_triangles k) := by
   intro t₁ ht₁ t₂ ht₂ hne
@@ -918,7 +925,11 @@ lemma grid_pairwise_disjoint (k : ℕ) (hk : k > 0) : PairwiseInteriorDisjoint (
         have h_down := down_interior_ineqs p i₁ j₁ k hk hp₂
         rcases h_up with ⟨_, _, _, _, h_up_sum⟩
         rcases h_down with ⟨_, _, _, _, h_down_sum⟩
-        nlinarith
+        have h_contra : equi_beta p + equi_gamma p < equi_beta p + equi_gamma p :=
+          calc
+            equi_beta p + equi_gamma p < ((i₁ + j₁ + 1 : ℝ)) / (k : ℝ) := h_up_sum
+            _ < equi_beta p + equi_gamma p := h_down_sum
+        exact lt_irrefl _ h_contra
       · by_cases hi : i₁ = i₂
         · by_cases hj : j₁ = j₂
           · exfalso; exact hcell (Prod.ext hi hj)
@@ -933,9 +944,9 @@ lemma grid_pairwise_disjoint (k : ℕ) (hk : k > 0) : PairwiseInteriorDisjoint (
             · have h_succ_le : (j₁ : ℕ) + 1 ≤ (j₂ : ℕ) := by omega
               have h_succ_le_ℝ : (j₁ + 1 : ℝ) ≤ (j₂ : ℝ) := by exact_mod_cast h_succ_le
               have h_mul : equi_gamma p * (k : ℝ) < (j₁ : ℝ) + 1 := by
-                nlinarith [hg1_high, hk_pos']
+                exact mul_lt_of_lt_div hk_pos' hg1_high
               have h_mul' : (j₂ : ℝ) < equi_gamma p * (k : ℝ) := by
-                nlinarith [hg2_low, hk_pos']
+                exact lt_mul_of_div_lt hk_pos' hg2_low
               nlinarith
             · have h_lt' : (j₂ : ℕ) < (j₁ : ℕ) := by
                 by_contra! hge
@@ -944,9 +955,9 @@ lemma grid_pairwise_disjoint (k : ℕ) (hk : k > 0) : PairwiseInteriorDisjoint (
               have h_succ_le' : (j₂ : ℕ) + 1 ≤ (j₁ : ℕ) := by omega
               have h_succ_le_ℝ' : (j₂ + 1 : ℝ) ≤ (j₁ : ℝ) := by exact_mod_cast h_succ_le'
               have h_mul : (j₁ : ℝ) < equi_gamma p * (k : ℝ) := by
-                nlinarith [hg1_low, hk_pos']
+                exact lt_mul_of_div_lt hk_pos' hg1_low
               have h_mul' : equi_gamma p * (k : ℝ) < (j₂ : ℝ) + 1 := by
-                nlinarith [hg2_high, hk_pos']
+                exact mul_lt_of_lt_div hk_pos' hg2_high
               nlinarith
         · -- different i
           have h_up := up_interior_ineqs p i₁ j₁ k hk hp₁
@@ -958,9 +969,9 @@ lemma grid_pairwise_disjoint (k : ℕ) (hk : k > 0) : PairwiseInteriorDisjoint (
           · have h_succ_le : (i₁ : ℕ) + 1 ≤ (i₂ : ℕ) := by omega
             have h_succ_le_ℝ : (i₁ + 1 : ℝ) ≤ (i₂ : ℝ) := by exact_mod_cast h_succ_le
             have h_mul : equi_beta p * (k : ℝ) < (i₁ : ℝ) + 1 := by
-              nlinarith [hg1_high, hk_pos']
+              exact mul_lt_of_lt_div hk_pos' hg1_high
             have h_mul' : (i₂ : ℝ) < equi_beta p * (k : ℝ) := by
-              nlinarith [hg2_low, hk_pos']
+              exact lt_mul_of_div_lt hk_pos' hg2_low
             nlinarith
           · have h_lt' : (i₂ : ℕ) < (i₁ : ℕ) := by
               by_contra! hge
@@ -969,9 +980,9 @@ lemma grid_pairwise_disjoint (k : ℕ) (hk : k > 0) : PairwiseInteriorDisjoint (
             have h_succ_le' : (i₂ : ℕ) + 1 ≤ (i₁ : ℕ) := by omega
             have h_succ_le_ℝ' : (i₂ + 1 : ℝ) ≤ (i₁ : ℝ) := by exact_mod_cast h_succ_le'
             have h_mul : (i₁ : ℝ) < equi_beta p * (k : ℝ) := by
-              nlinarith [hg1_low, hk_pos']
+              exact lt_mul_of_div_lt hk_pos' hg1_low
             have h_mul' : equi_beta p * (k : ℝ) < (i₂ : ℝ) + 1 := by
-              nlinarith [hg2_high, hk_pos']
+              exact mul_lt_of_lt_div hk_pos' hg2_high
             nlinarith
   · rcases Finset.mem_image.mp ht₁_down with ⟨⟨i₁, j₁⟩, hm₁, rfl⟩
     rcases Finset.mem_filter.mp hm₁ with ⟨hm₁_prod, hi₁j₁⟩
@@ -987,59 +998,63 @@ lemma grid_pairwise_disjoint (k : ℕ) (hk : k > 0) : PairwiseInteriorDisjoint (
         have h_up := up_interior_ineqs p i₁ j₁ k hk hp₂
         rcases h_down with ⟨_, _, _, _, h_down_sum⟩
         rcases h_up with ⟨_, _, _, _, h_up_sum⟩
-        nlinarith
+        have h_contra : equi_beta p + equi_gamma p < equi_beta p + equi_gamma p :=
+          calc
+            equi_beta p + equi_gamma p < ((i₁ + j₁ + 1 : ℝ)) / (k : ℝ) := h_up_sum
+            _ < equi_beta p + equi_gamma p := h_down_sum
+        exact lt_irrefl _ h_contra
       · by_cases hi : i₁ = i₂
         · by_cases hj : j₁ = j₂
           · exfalso; exact hcell (Prod.ext hi hj)
           · have hi_val : (i₁ : ℝ) = (i₂ : ℝ) := by exact_mod_cast hi
-             have h_down := down_interior_ineqs p i₁ j₁ k hk hp₁
-             have h_up := up_interior_ineqs p i₂ j₂ k hk hp₂
-             rcases h_down with ⟨_, _, hg1_low, hg1_high, _⟩
-             rcases h_up with ⟨_, _, hg2_low, hg2_high, _⟩
-             have hk_pos' : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
-             by_cases h_j_lt : (j₁ : ℕ) < (j₂ : ℕ)
-             · have h_succ_le : (j₁ : ℕ) + 1 ≤ (j₂ : ℕ) := by omega
-               have h_succ_le_ℝ : (j₁ + 1 : ℝ) ≤ (j₂ : ℝ) := by exact_mod_cast h_succ_le
-               have h_mul : equi_gamma p * (k : ℝ) < (j₁ : ℝ) + 1 := by
-                 nlinarith [hg1_high, hk_pos']
-               have h_mul' : (j₂ : ℝ) < equi_gamma p * (k : ℝ) := by
-                 nlinarith [hg2_low, hk_pos']
-               nlinarith
-             · have h_lt' : (j₂ : ℕ) < (j₁ : ℕ) := by
-                 by_contra! hge
-                 have : j₁ = j₂ := by omega
-                 exact hj this
-               have h_succ_le' : (j₂ : ℕ) + 1 ≤ (j₁ : ℕ) := by omega
-               have h_succ_le_ℝ' : (j₂ + 1 : ℝ) ≤ (j₁ : ℝ) := by exact_mod_cast h_succ_le'
-               have h_mul : (j₁ : ℝ) < equi_gamma p * (k : ℝ) := by
-                 nlinarith [hg1_low, hk_pos']
-               have h_mul' : equi_gamma p * (k : ℝ) < (j₂ : ℝ) + 1 := by
-                 nlinarith [hg2_high, hk_pos']
-               nlinarith
-         · have h_down := down_interior_ineqs p i₁ j₁ k hk hp₁
-           have h_up := up_interior_ineqs p i₂ j₂ k hk hp₂
-           rcases h_down with ⟨hg1_low, hg1_high, _, _, _⟩
-           rcases h_up with ⟨hg2_low, hg2_high, _, _, _⟩
-           have hk_pos' : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
-           by_cases h_i_lt : (i₁ : ℕ) < (i₂ : ℕ)
-           · have h_succ_le : (i₁ : ℕ) + 1 ≤ (i₂ : ℕ) := by omega
-             have h_succ_le_ℝ : (i₁ + 1 : ℝ) ≤ (i₂ : ℝ) := by exact_mod_cast h_succ_le
-             have h_mul : equi_beta p * (k : ℝ) < (i₁ : ℝ) + 1 := by
-               nlinarith [hg1_high, hk_pos']
-             have h_mul' : (i₂ : ℝ) < equi_beta p * (k : ℝ) := by
-               nlinarith [hg2_low, hk_pos']
-             nlinarith
-           · have h_lt' : (i₂ : ℕ) < (i₁ : ℕ) := by
-               by_contra! hge
-               have : i₁ = i₂ := by omega
-               exact hi this
-             have h_succ_le' : (i₂ : ℕ) + 1 ≤ (i₁ : ℕ) := by omega
-             have h_succ_le_ℝ' : (i₂ + 1 : ℝ) ≤ (i₁ : ℝ) := by exact_mod_cast h_succ_le'
-             have h_mul : (i₁ : ℝ) < equi_beta p * (k : ℝ) := by
-               nlinarith [hg1_low, hk_pos']
-             have h_mul' : equi_beta p * (k : ℝ) < (i₂ : ℝ) + 1 := by
-               nlinarith [hg2_high, hk_pos']
-             nlinarith
+            have h_down := down_interior_ineqs p i₁ j₁ k hk hp₁
+            have h_up := up_interior_ineqs p i₂ j₂ k hk hp₂
+            rcases h_down with ⟨_, _, hg1_low, hg1_high, _⟩
+            rcases h_up with ⟨_, _, hg2_low, hg2_high, _⟩
+            have hk_pos' : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
+            by_cases h_j_lt : (j₁ : ℕ) < (j₂ : ℕ)
+            · have h_succ_le : (j₁ : ℕ) + 1 ≤ (j₂ : ℕ) := by omega
+              have h_succ_le_ℝ : (j₁ + 1 : ℝ) ≤ (j₂ : ℝ) := by exact_mod_cast h_succ_le
+              have h_mul : equi_gamma p * (k : ℝ) < (j₁ : ℝ) + 1 := by
+                exact mul_lt_of_lt_div hk_pos' hg1_high
+              have h_mul' : (j₂ : ℝ) < equi_gamma p * (k : ℝ) := by
+                exact lt_mul_of_div_lt hk_pos' hg2_low
+              nlinarith
+            · have h_lt' : (j₂ : ℕ) < (j₁ : ℕ) := by
+                by_contra! hge
+                have : j₁ = j₂ := by omega
+                exact hj this
+              have h_succ_le' : (j₂ : ℕ) + 1 ≤ (j₁ : ℕ) := by omega
+              have h_succ_le_ℝ' : (j₂ + 1 : ℝ) ≤ (j₁ : ℝ) := by exact_mod_cast h_succ_le'
+              have h_mul : (j₁ : ℝ) < equi_gamma p * (k : ℝ) := by
+                exact lt_mul_of_div_lt hk_pos' hg1_low
+              have h_mul' : equi_gamma p * (k : ℝ) < (j₂ : ℝ) + 1 := by
+                exact mul_lt_of_lt_div hk_pos' hg2_high
+              nlinarith
+        · have h_down := down_interior_ineqs p i₁ j₁ k hk hp₁
+          have h_up := up_interior_ineqs p i₂ j₂ k hk hp₂
+          rcases h_down with ⟨hg1_low, hg1_high, _, _, _⟩
+          rcases h_up with ⟨hg2_low, hg2_high, _, _, _⟩
+          have hk_pos' : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
+          by_cases h_i_lt : (i₁ : ℕ) < (i₂ : ℕ)
+          · have h_succ_le : (i₁ : ℕ) + 1 ≤ (i₂ : ℕ) := by omega
+            have h_succ_le_ℝ : (i₁ + 1 : ℝ) ≤ (i₂ : ℝ) := by exact_mod_cast h_succ_le
+            have h_mul : equi_beta p * (k : ℝ) < (i₁ : ℝ) + 1 := by
+              exact mul_lt_of_lt_div hk_pos' hg1_high
+            have h_mul' : (i₂ : ℝ) < equi_beta p * (k : ℝ) := by
+              exact lt_mul_of_div_lt hk_pos' hg2_low
+            nlinarith
+          · have h_lt' : (i₂ : ℕ) < (i₁ : ℕ) := by
+              by_contra! hge
+              have : i₁ = i₂ := by omega
+              exact hi this
+            have h_succ_le' : (i₂ : ℕ) + 1 ≤ (i₁ : ℕ) := by omega
+            have h_succ_le_ℝ' : (i₂ + 1 : ℝ) ≤ (i₁ : ℝ) := by exact_mod_cast h_succ_le'
+            have h_mul : (i₁ : ℝ) < equi_beta p * (k : ℝ) := by
+              exact lt_mul_of_div_lt hk_pos' hg1_low
+            have h_mul' : equi_beta p * (k : ℝ) < (i₂ : ℝ) + 1 := by
+              exact mul_lt_of_lt_div hk_pos' hg2_high
+            nlinarith
     · rcases Finset.mem_image.mp ht₂_down with ⟨⟨i₂, j₂⟩, hm₂, rfl⟩
       rcases Finset.mem_filter.mp hm₂ with ⟨hm₂_prod, hi₂j₂⟩
       have hi₂j₂_val : (i₂ : ℕ) + j₂ < k - 1 := hi₂j₂
@@ -1052,54 +1067,54 @@ lemma grid_pairwise_disjoint (k : ℕ) (hk : k > 0) : PairwiseInteriorDisjoint (
       · by_cases hi : i₁ = i₂
         · by_cases hj : j₁ = j₂
           · exfalso; exact h_eq (Prod.ext hi hj)
-           · have hg1 := down_interior_ineqs p i₁ j₁ k hk hp₁
-             have hg2 := down_interior_ineqs p i₂ j₂ k hk hp₂
-             rcases hg1 with ⟨_, _, hg1_low, hg1_high, _⟩
-             rcases hg2 with ⟨_, _, hg2_low, hg2_high, _⟩
-             have hk_pos' : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
-             by_cases h_j_lt : (j₁ : ℕ) < (j₂ : ℕ)
-             · have h_succ_le : (j₁ : ℕ) + 1 ≤ (j₂ : ℕ) := by omega
-               have h_succ_le_ℝ : (j₁ + 1 : ℝ) ≤ (j₂ : ℝ) := by exact_mod_cast h_succ_le
-               have h_mul : equi_gamma p * (k : ℝ) < (j₁ : ℝ) + 1 := by
-                 nlinarith [hg1_high, hk_pos']
-               have h_mul' : (j₂ : ℝ) < equi_gamma p * (k : ℝ) := by
-                 nlinarith [hg2_low, hk_pos']
-               nlinarith
-             · have h_lt' : (j₂ : ℕ) < (j₁ : ℕ) := by
-                 by_contra! hge
-                 have : j₁ = j₂ := by omega
-                 exact hj this
-               have h_succ_le' : (j₂ : ℕ) + 1 ≤ (j₁ : ℕ) := by omega
-               have h_succ_le_ℝ' : (j₂ + 1 : ℝ) ≤ (j₁ : ℝ) := by exact_mod_cast h_succ_le'
-               have h_mul : (j₁ : ℝ) < equi_gamma p * (k : ℝ) := by
-                 nlinarith [hg1_low, hk_pos']
-               have h_mul' : equi_gamma p * (k : ℝ) < (j₂ : ℝ) + 1 := by
-                 nlinarith [hg2_high, hk_pos']
-               nlinarith
-         · have hg1 := down_interior_ineqs p i₁ j₁ k hk hp₁
-           have hg2 := down_interior_ineqs p i₂ j₂ k hk hp₂
-           rcases hg1 with ⟨hg1_low, hg1_high, _, _, _⟩
-           rcases hg2 with ⟨hg2_low, hg2_high, _, _, _⟩
-           have hk_pos' : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
-           by_cases h_i_lt : (i₁ : ℕ) < (i₂ : ℕ)
-           · have h_succ_le : (i₁ : ℕ) + 1 ≤ (i₂ : ℕ) := by omega
-             have h_succ_le_ℝ : (i₁ + 1 : ℝ) ≤ (i₂ : ℝ) := by exact_mod_cast h_succ_le
-             have h_mul : equi_beta p * (k : ℝ) < (i₁ : ℝ) + 1 := by
-               nlinarith [hg1_high, hk_pos']
-             have h_mul' : (i₂ : ℝ) < equi_beta p * (k : ℝ) := by
-               nlinarith [hg2_low, hk_pos']
-             nlinarith
-           · have h_lt' : (i₂ : ℕ) < (i₁ : ℕ) := by
-               by_contra! hge
-               have : i₁ = i₂ := by omega
-               exact hi this
-             have h_succ_le' : (i₂ : ℕ) + 1 ≤ (i₁ : ℕ) := by omega
-             have h_succ_le_ℝ' : (i₂ + 1 : ℝ) ≤ (i₁ : ℝ) := by exact_mod_cast h_succ_le'
-             have h_mul : (i₁ : ℝ) < equi_beta p * (k : ℝ) := by
-               nlinarith [hg1_low, hk_pos']
-             have h_mul' : equi_beta p * (k : ℝ) < (i₂ : ℝ) + 1 := by
-               nlinarith [hg2_high, hk_pos']
-             nlinarith
+          · have hg1 := down_interior_ineqs p i₁ j₁ k hk hp₁
+            have hg2 := down_interior_ineqs p i₂ j₂ k hk hp₂
+            rcases hg1 with ⟨_, _, hg1_low, hg1_high, _⟩
+            rcases hg2 with ⟨_, _, hg2_low, hg2_high, _⟩
+            have hk_pos' : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
+            by_cases h_j_lt : (j₁ : ℕ) < (j₂ : ℕ)
+            · have h_succ_le : (j₁ : ℕ) + 1 ≤ (j₂ : ℕ) := by omega
+              have h_succ_le_ℝ : (j₁ + 1 : ℝ) ≤ (j₂ : ℝ) := by exact_mod_cast h_succ_le
+              have h_mul : equi_gamma p * (k : ℝ) < (j₁ : ℝ) + 1 := by
+                exact mul_lt_of_lt_div hk_pos' hg1_high
+              have h_mul' : (j₂ : ℝ) < equi_gamma p * (k : ℝ) := by
+                exact lt_mul_of_div_lt hk_pos' hg2_low
+              nlinarith
+            · have h_lt' : (j₂ : ℕ) < (j₁ : ℕ) := by
+                by_contra! hge
+                have : j₁ = j₂ := by omega
+                exact hj this
+              have h_succ_le' : (j₂ : ℕ) + 1 ≤ (j₁ : ℕ) := by omega
+              have h_succ_le_ℝ' : (j₂ + 1 : ℝ) ≤ (j₁ : ℝ) := by exact_mod_cast h_succ_le'
+              have h_mul : (j₁ : ℝ) < equi_gamma p * (k : ℝ) := by
+                exact lt_mul_of_div_lt hk_pos' hg1_low
+              have h_mul' : equi_gamma p * (k : ℝ) < (j₂ : ℝ) + 1 := by
+                exact mul_lt_of_lt_div hk_pos' hg2_high
+              nlinarith
+        · have hg1 := down_interior_ineqs p i₁ j₁ k hk hp₁
+          have hg2 := down_interior_ineqs p i₂ j₂ k hk hp₂
+          rcases hg1 with ⟨hg1_low, hg1_high, _, _, _⟩
+          rcases hg2 with ⟨hg2_low, hg2_high, _, _, _⟩
+          have hk_pos' : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
+          by_cases h_i_lt : (i₁ : ℕ) < (i₂ : ℕ)
+          · have h_succ_le : (i₁ : ℕ) + 1 ≤ (i₂ : ℕ) := by omega
+            have h_succ_le_ℝ : (i₁ + 1 : ℝ) ≤ (i₂ : ℝ) := by exact_mod_cast h_succ_le
+            have h_mul : equi_beta p * (k : ℝ) < (i₁ : ℝ) + 1 := by
+              exact mul_lt_of_lt_div hk_pos' hg1_high
+            have h_mul' : (i₂ : ℝ) < equi_beta p * (k : ℝ) := by
+              exact lt_mul_of_div_lt hk_pos' hg2_low
+            nlinarith
+          · have h_lt' : (i₂ : ℕ) < (i₁ : ℕ) := by
+              by_contra! hge
+              have : i₁ = i₂ := by omega
+              exact hi this
+            have h_succ_le' : (i₂ : ℕ) + 1 ≤ (i₁ : ℕ) := by omega
+            have h_succ_le_ℝ' : (i₂ + 1 : ℝ) ≤ (i₁ : ℝ) := by exact_mod_cast h_succ_le'
+            have h_mul : (i₁ : ℝ) < equi_beta p * (k : ℝ) := by
+              exact lt_mul_of_div_lt hk_pos' hg1_low
+            have h_mul' : equi_beta p * (k : ℝ) < (i₂ : ℝ) + 1 := by
+              exact mul_lt_of_lt_div hk_pos' hg2_high
+            nlinarith
 
 /-- The equilateral grid construction satisfies GeometricTiling. -/
 lemma squares_constructive_geometric (k : ℕ) (hk : k > 0) : GeometricTriangleTilable (k^2) := by
