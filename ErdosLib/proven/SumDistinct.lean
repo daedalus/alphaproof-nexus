@@ -5,11 +5,11 @@ namespace ErdosLib
 
 /-- A subset A of {1..N} with all subset sums distinct. -/
 abbrev IsSumDistinctSet (A : Finset ℕ) (N : ℕ) : Prop :=
-  A ⊆ Finset.Icc 1 N ∧ (Function.Injective (λ (S : Finset A) => ∑ a in S, (a : ℕ).val))
+  A ⊆ Finset.Icc 1 N ∧ (Function.Injective (λ (S : Finset A) => ∑ a ∈ S, (a : ℕ).val))
 
 /-- The set of all subset sums of A (as a Finset ℕ). -/
 def subset_sums (A : Finset ℕ) : Finset ℕ :=
-  (Finset.powerset A).image (λ S => ∑ a in S, a)
+  (Finset.powerset A).image (λ S => ∑ a ∈ S, a)
 
 lemma subset_sums_upper_bound (A : Finset ℕ) (hA : A ⊆ Finset.Icc 1 N) :
     ∀ s ∈ subset_sums A, s ≤ A.card * N := by
@@ -17,7 +17,7 @@ lemma subset_sums_upper_bound (A : Finset ℕ) (hA : A ⊆ Finset.Icc 1 N) :
   rcases Finset.mem_image.mp hs with ⟨S, hS, rfl⟩
   have hS_sub_A : S ⊆ A := Finset.mem_powerset.mp hS
   calc
-    (∑ a in S, a) ≤ (∑ a in S, N) :=
+    (∑ a ∈ S, a) ≤ (∑ a ∈ S, N) :=
       Finset.sum_le_sum (λ a ha => (Finset.mem_Icc.mp (hA (hS_sub_A ha))).2)
     _ = S.card * N := by simp
     _ ≤ A.card * N := Nat.mul_le_mul_right N (Finset.card_le_card hS_sub_A)
@@ -31,16 +31,16 @@ lemma trivial_bound (A : Finset ℕ) (N : ℕ) (h : IsSumDistinctSet A N) (hN : 
   · subst hA0; simp
   have h_card_ps : (A.powerset : Finset (Finset ℕ)).card = 2 ^ A.card := by
     simp
-  have h_sum_bound : ∀ S, S ∈ A.powerset → (∑ a in S, a) ≤ A.card * N := by
+  have h_sum_bound : ∀ S, S ∈ A.powerset → (∑ a ∈ S, a) ≤ A.card * N := by
     intro S hS
     have hS_sub_A : S ⊆ A := Finset.mem_powerset.mp hS
     have hS_sub_Icc : S ⊆ Finset.Icc 1 N := Finset.Subset.trans hS_sub_A hA_sub
     calc
-      (∑ a in S, a) ≤ (∑ a in S, N) :=
+      (∑ a ∈ S, a) ≤ (∑ a ∈ S, N) :=
         Finset.sum_le_sum (λ a ha => (Finset.mem_Icc.mp (hS_sub_Icc ha)).2)
       _ = S.card * N := by simp
       _ ≤ A.card * N := Nat.mul_le_mul_right N (Finset.card_le_card hS_sub_A)
-  let f : A.powerset → ℕ := λ ⟨S, hS⟩ => ∑ a in S, a
+  let f : A.powerset → ℕ := λ ⟨S, hS⟩ => ∑ a ∈ S, a
   have hf_inj : Function.Injective f := h_inj
   have hf_image_sub : Finset.image f Finset.univ ⊆ Finset.range (A.card * N + 1) := by
     intro x hx
@@ -66,12 +66,12 @@ lemma trivial_bound_real (A : Finset ℕ) (N : ℕ) (h : IsSumDistinctSet A N) (
 def powers_of_two_set (k : ℕ) : Finset ℕ :=
   (Finset.range k).image (λ i => 2 ^ i)
 
-lemma sum_range_pow_two_eq (j : ℕ) : (∑ i in Finset.range j, (2 : ℕ) ^ i) = (2 : ℕ) ^ j - 1 := by
+lemma sum_range_pow_two_eq (j : ℕ) : (∑ i ∈ Finset.range j, (2 : ℕ) ^ i) = (2 : ℕ) ^ j - 1 := by
   induction' j with j ih
   · simp
   · rw [Finset.sum_range_succ, ih, pow_succ]; omega
 
-lemma sum_range_pow_two_lt (j : ℕ) : (∑ i in Finset.range j, (2 : ℕ) ^ i) < (2 : ℕ) ^ j := by
+lemma sum_range_pow_two_lt (j : ℕ) : (∑ i ∈ Finset.range j, (2 : ℕ) ^ i) < (2 : ℕ) ^ j := by
   have := sum_range_pow_two_eq j; omega
 
 lemma card_powers_of_two_set (k : ℕ) : (powers_of_two_set k).card = k := by
@@ -80,7 +80,7 @@ lemma card_powers_of_two_set (k : ℕ) : (powers_of_two_set k).card = k := by
 lemma powers_of_two_set_subset_Icc (k : ℕ) : powers_of_two_set k ⊆ Finset.Icc 1 (2 ^ (k-1)) := by
   intro x hx
   rcases Finset.mem_image.mp hx with ⟨i, hi, rfl⟩
-  have hx_pos : 1 ≤ 2 ^ i := Nat.one_le_two_pow _
+  have hx_pos : 1 ≤ 2 ^ i := Nat.one_le_two_pow i
   have hx_bound : 2 ^ i ≤ 2 ^ (k-1) := by
     have hi_k : i < k := Finset.mem_range.mp hi
     have : i ≤ k-1 := by omega
