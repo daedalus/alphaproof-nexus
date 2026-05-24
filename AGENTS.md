@@ -111,4 +111,4 @@ Population members are self-contained and typically ignore ErdosLib.
 |---------|-----|---------|------|----------|--------|
 | #1 — sum-distinct sets | `Erdos1/` | 5 | 1 | `member_05_champion.lean` | Proof complete (0 sorries) |
 | #25 — congruence-avoiding sets | `Erdos25-evolve/` | 12 | 5 | `member_04_gen1_head_truncation.lean` | 10 sorries (1 mathematically open) |
-| #634 — triangle tilings | `Erdos634/` | 2 | 2 | `member_02_gen2_soifer_constructions.lean` | Soifer constructions framework (geometry) |
+| #634 — triangle tilings | `Erdos634/` | 4 | 4 | `member_04_gen4_not_tilable_0.lean` | 0 errors, 3 sorries (Beeson obstructions + conjectured prime obstruction) |
