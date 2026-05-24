@@ -4,7 +4,9 @@
 [erdosproblems.com/25](https://www.erdosproblems.com/25) — Open, $0 prize.
 
 This repo applies the [AlphaProof Nexus](https://arxiv.org/abs/2605.22763) evolutionary
-methodology to decompose and attack the problem in Lean 4.
+methodology to decompose and attack the problem in Lean 4, using the
+[alphaproof-nexus skill](https://github.com/daedalus/skills) to guide the
+Ralph loop and EVOLVE-BLOCK/VALUE structure.
 
 ## Population (3 generations, 10 members)
 
