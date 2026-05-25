@@ -1727,6 +1727,564 @@ lemma sum_of_three_squares_11 : ∃ a b c : ℕ, a^2 + b^2 + c^2 = 11 := by
 
 
 
+/-
+! 3a² geometric constructive tiling: centroid decomposition
+
+The three triangles formed by connecting each vertex of an equilateral triangle
+to its centroid are congruent (isosceles with sides 2, 2/√3, 2/√3).
+This gives a geometric tiling for n = 3.
+-/
+
+/-- Centroid of equilateral_side_two (side length 2). -/
+noncomputable def centroid_eq : ℝ × ℝ := (1, Real.sqrt 3 / 3)
+
+/-- Centroid-based triangle A=(0,0) – B=(2,0) – centroid. -/
+noncomputable def centroid_ab : Triangle :=
+  { A := (0, 0)
+    B := (2, 0)
+    C := centroid_eq
+    nondegenerate := by
+      have h : ((0 : ℝ) * ((0 : ℝ) - centroid_eq.2) + (2 : ℝ) * (centroid_eq.2 - (0 : ℝ)) + centroid_eq.1 * ((0 : ℝ) - (0 : ℝ)))
+        = 2 * Real.sqrt 3 / 3 := by
+        simp [centroid_eq]; ring
+      rw [h]; positivity }
+
+/-- Centroid-based triangle B=(2,0) – C=(1,√3) – centroid. -/
+noncomputable def centroid_bc : Triangle :=
+  { A := (2, 0)
+    B := (1, Real.sqrt 3)
+    C := centroid_eq
+    nondegenerate := by
+      have h : ((2 : ℝ) * (Real.sqrt 3 - centroid_eq.2) + (1 : ℝ) * (centroid_eq.2 - (0 : ℝ)) + centroid_eq.1 * ((0 : ℝ) - Real.sqrt 3))
+        = 2 * Real.sqrt 3 / 3 := by
+        simp [centroid_eq]; ring
+      rw [h]; positivity }
+
+/-- Centroid-based triangle C=(1,√3) – A=(0,0) – centroid. -/
+noncomputable def centroid_ca : Triangle :=
+  { A := (1, Real.sqrt 3)
+    B := (0, 0)
+    C := centroid_eq
+    nondegenerate := by
+      have h : ((1 : ℝ) * ((0 : ℝ) - centroid_eq.2) + (0 : ℝ) * (centroid_eq.2 - Real.sqrt 3) + centroid_eq.1 * (Real.sqrt 3 - (0 : ℝ)))
+        = 2 * Real.sqrt 3 / 3 := by
+        simp [centroid_eq]; ring
+      rw [h]; positivity }
+
+lemma distSq_centroid_ab : distSq centroid_ab.A centroid_ab.B = 4 ∧
+  distSq centroid_ab.B centroid_ab.C = 4/3 ∧ distSq centroid_ab.C centroid_ab.A = 4/3 := by
+  have hsq3 : (Real.sqrt 3)^2 = (3 : ℝ) := Real.sq_sqrt (by norm_num : 0 ≤ (3 : ℝ))
+  unfold centroid_ab centroid_eq distSq; simp
+  refine ⟨?_, ?_, ?_⟩
+  · nlinarith
+  · nlinarith [hsq3]
+  · nlinarith [hsq3]
+
+lemma distSq_centroid_bc : distSq centroid_bc.A centroid_bc.B = 4 ∧
+  distSq centroid_bc.B centroid_bc.C = 4/3 ∧ distSq centroid_bc.C centroid_bc.A = 4/3 := by
+  have hsq3 : (Real.sqrt 3)^2 = (3 : ℝ) := Real.sq_sqrt (by norm_num : 0 ≤ (3 : ℝ))
+  unfold centroid_bc centroid_eq distSq; simp
+  refine ⟨?_, ?_, ?_⟩
+  · nlinarith
+  · nlinarith [hsq3]
+  · nlinarith [hsq3]
+
+lemma distSq_centroid_ca : distSq centroid_ca.A centroid_ca.B = 4 ∧
+  distSq centroid_ca.B centroid_ca.C = 4/3 ∧ distSq centroid_ca.C centroid_ca.A = 4/3 := by
+  have hsq3 : (Real.sqrt 3)^2 = (3 : ℝ) := Real.sq_sqrt (by norm_num : 0 ≤ (3 : ℝ))
+  unfold centroid_ca centroid_eq distSq; simp
+  refine ⟨?_, ?_, ?_⟩
+  · nlinarith
+  · nlinarith [hsq3]
+  · nlinarith [hsq3]
+
+lemma centroid_ab_congruent_bc : Congruent centroid_ab centroid_bc := by
+  rcases distSq_centroid_ab with ⟨hAB, hBC, hCA⟩
+  rcases distSq_centroid_bc with ⟨hAB', hBC', hCA'⟩
+  refine Or.inl ⟨?_, ?_, ?_⟩
+  · rw [hAB, hAB']
+  · rw [hBC, hBC']
+  · rw [hCA, hCA']
+
+lemma centroid_ab_congruent_ca : Congruent centroid_ab centroid_ca := by
+  rcases distSq_centroid_ab with ⟨hAB, hBC, hCA⟩
+  rcases distSq_centroid_ca with ⟨hAB', hBC', hCA'⟩
+  refine Or.inl ⟨?_, ?_, ?_⟩
+  · rw [hAB, hAB']
+  · rw [hBC, hBC']
+  · rw [hCA, hCA']
+
+lemma centroid_bc_congruent_ab : Congruent centroid_bc centroid_ab := by
+  rcases distSq_centroid_bc with ⟨hAB, hBC, hCA⟩
+  rcases distSq_centroid_ab with ⟨hAB', hBC', hCA'⟩
+  refine Or.inl ⟨?_, ?_, ?_⟩
+  · rw [hAB, hAB']
+  · rw [hBC, hBC']
+  · rw [hCA, hCA']
+
+lemma centroid_ca_congruent_ab : Congruent centroid_ca centroid_ab := by
+  rcases distSq_centroid_ca with ⟨hAB, hBC, hCA⟩
+  rcases distSq_centroid_ab with ⟨hAB', hBC', hCA'⟩
+  refine Or.inl ⟨?_, ?_, ?_⟩
+  · rw [hAB, hAB']
+  · rw [hBC, hBC']
+  · rw [hCA, hCA']
+
+lemma signed_area_centroid_ab : signed_area centroid_ab = Real.sqrt 3 / 3 := by
+  unfold signed_area centroid_ab centroid_eq; ring
+
+lemma signed_area_centroid_bc : signed_area centroid_bc = Real.sqrt 3 / 3 := by
+  unfold signed_area centroid_bc centroid_eq; ring
+
+lemma signed_area_centroid_ca : signed_area centroid_ca = Real.sqrt 3 / 3 := by
+  unfold signed_area centroid_ca centroid_eq; ring
+
+lemma centroid_ab_subset_T : point_in_triangle centroid_ab.A equilateral_side_two ∧
+  point_in_triangle centroid_ab.B equilateral_side_two ∧
+  point_in_triangle centroid_ab.C equilateral_side_two := by
+  refine ⟨⟨1, 0, 0, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩,
+    ⟨0, 1, 0, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩,
+    ⟨1/3, 1/3, 1/3, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩⟩
+  · unfold centroid_ab equilateral_side_two; norm_num
+  · unfold centroid_ab equilateral_side_two; norm_num
+  · unfold centroid_ab equilateral_side_two; norm_num
+  · unfold centroid_ab equilateral_side_two; norm_num
+  · unfold centroid_ab centroid_eq equilateral_side_two; norm_num
+  · unfold centroid_ab centroid_eq equilateral_side_two; field_simp; simp
+
+lemma centroid_bc_subset_T : point_in_triangle centroid_bc.A equilateral_side_two ∧
+  point_in_triangle centroid_bc.B equilateral_side_two ∧
+  point_in_triangle centroid_bc.C equilateral_side_two := by
+  refine ⟨⟨0, 1, 0, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩,
+    ⟨0, 0, 1, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩,
+    ⟨1/3, 1/3, 1/3, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩⟩
+  · unfold centroid_bc equilateral_side_two; norm_num
+  · unfold centroid_bc equilateral_side_two; norm_num
+  · unfold centroid_bc equilateral_side_two; norm_num
+  · unfold centroid_bc equilateral_side_two; norm_num
+  · unfold centroid_bc centroid_eq equilateral_side_two; norm_num
+  · unfold centroid_bc centroid_eq equilateral_side_two; field_simp; simp
+
+lemma centroid_ca_subset_T : point_in_triangle centroid_ca.A equilateral_side_two ∧
+  point_in_triangle centroid_ca.B equilateral_side_two ∧
+  point_in_triangle centroid_ca.C equilateral_side_two := by
+  refine ⟨⟨0, 0, 1, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩,
+    ⟨1, 0, 0, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩,
+    ⟨1/3, 1/3, 1/3, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩⟩
+  · unfold centroid_ca equilateral_side_two; norm_num
+  · unfold centroid_ca equilateral_side_two; norm_num
+  · unfold centroid_ca equilateral_side_two; norm_num
+  · unfold centroid_ca equilateral_side_two; norm_num
+  · unfold centroid_ca centroid_eq equilateral_side_two; norm_num
+  · unfold centroid_ca centroid_eq equilateral_side_two; field_simp; simp
+
+lemma centroid_vertices_cover_T :
+    equilateral_side_two.A ∈ Finset.biUnion {centroid_ab, centroid_bc, centroid_ca} (λ t => {t.A, t.B, t.C}) ∧
+    equilateral_side_two.B ∈ Finset.biUnion {centroid_ab, centroid_bc, centroid_ca} (λ t => {t.A, t.B, t.C}) ∧
+    equilateral_side_two.C ∈ Finset.biUnion {centroid_ab, centroid_bc, centroid_ca} (λ t => {t.A, t.B, t.C}) := by
+  refine ⟨?_, ?_, ?_⟩
+  · apply Finset.mem_biUnion.mpr; refine ⟨centroid_ab, by simp, ?_⟩; simp [centroid_ab, equilateral_side_two]
+  · apply Finset.mem_biUnion.mpr; refine ⟨centroid_bc, by simp, ?_⟩; simp [centroid_bc, equilateral_side_two]
+  · apply Finset.mem_biUnion.mpr; refine ⟨centroid_ca, by simp, ?_⟩; simp [centroid_ca, equilateral_side_two]
+
+/-- If p is in the interior of centroid_ab, then w.r.t. equilateral_side_two
+    barycentrics (a,b,c) we have c < a and c < b (c is the strict minimum). -/
+lemma interior_centroid_ab_ineq (p : ℝ × ℝ) (h : point_in_interior p centroid_ab) :
+    ∃ (a b c : ℝ), a > 0 ∧ b > 0 ∧ c > 0 ∧ a + b + c = 1 ∧ p.1 = 2*b + c ∧ p.2 = c * Real.sqrt 3 ∧ c < a ∧ c < b := by
+  rcases h with ⟨α, β, γ, hα, hβ, hγ, hsum, hx, hy⟩
+  have hp1 : p.1 = 2*β + γ := by
+    dsimp [centroid_ab, centroid_eq] at hx; nlinarith
+  have hp2 : p.2 = γ * Real.sqrt 3 / 3 := by
+    dsimp [centroid_ab, centroid_eq] at hy; nlinarith
+  set c := γ/3 with hc
+  set b := β + c with hb
+  set a := 1 - b - c with ha
+  have ha_pos : a > 0 := by dsimp [a, b, c]; nlinarith
+  have hb_pos : b > 0 := by dsimp [b, c]; nlinarith
+  have hc_pos : c > 0 := by dsimp [c]; nlinarith
+  have hsum_abc : a + b + c = 1 := by dsimp [a, b, c]; nlinarith
+  have hp1_eq : p.1 = 2*b + c := by dsimp [b, c]; nlinarith
+  have hp2_eq : p.2 = c * Real.sqrt 3 := by dsimp [c]; rw [hp2]; ring
+  have hc_lt_a : c < a := by dsimp [a, b, c]; nlinarith
+  have hc_lt_b : c < b := by dsimp [b, c]; nlinarith
+  exact ⟨a, b, c, ha_pos, hb_pos, hc_pos, hsum_abc, hp1_eq, hp2_eq, hc_lt_a, hc_lt_b⟩
+
+/-- If p is in the interior of centroid_bc, then a < b and a < c (a is the strict minimum). -/
+lemma interior_centroid_bc_ineq (p : ℝ × ℝ) (h : point_in_interior p centroid_bc) :
+    ∃ (a b c : ℝ), a > 0 ∧ b > 0 ∧ c > 0 ∧ a + b + c = 1 ∧ p.1 = 2*b + c ∧ p.2 = c * Real.sqrt 3 ∧ a < b ∧ a < c := by
+  rcases h with ⟨α, β, γ, hα, hβ, hγ, hsum, hx, hy⟩
+  have hp1 : p.1 = 2*α + β + γ := by
+    dsimp [centroid_bc, centroid_eq] at hx; nlinarith
+  have hp2 : p.2 = β * Real.sqrt 3 + γ * Real.sqrt 3 / 3 := by
+    dsimp [centroid_bc, centroid_eq] at hy; nlinarith
+  set a := γ/3 with ha
+  set b := α + a with hb
+  set c := β + a with hc
+  have ha_pos : a > 0 := by dsimp [a]; nlinarith
+  have hb_pos : b > 0 := by dsimp [b, a]; nlinarith
+  have hc_pos : c > 0 := by dsimp [c, a]; nlinarith
+  have hsum_abc : a + b + c = 1 := by dsimp [a, b, c]; nlinarith
+  have hp1_eq : p.1 = 2*b + c := by dsimp [b, c, a]; nlinarith
+  have hp2_eq : p.2 = c * Real.sqrt 3 := by dsimp [c, a]; rw [hp2]; ring
+  have ha_lt_b : a < b := by dsimp [a, b]; nlinarith
+  have ha_lt_c : a < c := by dsimp [a, c]; nlinarith
+  exact ⟨a, b, c, ha_pos, hb_pos, hc_pos, hsum_abc, hp1_eq, hp2_eq, ha_lt_b, ha_lt_c⟩
+
+/-- If p is in the interior of centroid_ca, then b < a and b < c (b is the strict minimum). -/
+lemma interior_centroid_ca_ineq (p : ℝ × ℝ) (h : point_in_interior p centroid_ca) :
+    ∃ (a b c : ℝ), a > 0 ∧ b > 0 ∧ c > 0 ∧ a + b + c = 1 ∧ p.1 = 2*b + c ∧ p.2 = c * Real.sqrt 3 ∧ b < a ∧ b < c := by
+  rcases h with ⟨α, β, γ, hα, hβ, hγ, hsum, hx, hy⟩
+  have hp1 : p.1 = 1*α + 0*β + 1*γ := by
+    dsimp [centroid_ca, centroid_eq] at hx; nlinarith
+  have hp2 : p.2 = α * Real.sqrt 3 + γ * Real.sqrt 3 / 3 := by
+    dsimp [centroid_ca, centroid_eq] at hy; nlinarith
+  set b := γ/3 with hb
+  set a := β + b with ha
+  set c := α + b with hc
+  have ha_pos : a > 0 := by dsimp [a, b]; nlinarith
+  have hb_pos : b > 0 := by dsimp [b]; nlinarith
+  have hc_pos : c > 0 := by dsimp [c, b]; nlinarith
+  have hsum_abc : a + b + c = 1 := by dsimp [a, b, c]; nlinarith
+  have hp1_eq : p.1 = 2*b + c := by dsimp [b, c]; nlinarith
+  have hp2_eq : p.2 = c * Real.sqrt 3 := by
+    dsimp [c, b]; rw [hp2]; ring
+  have hb_lt_a : b < a := by dsimp [a, b]; nlinarith
+  have hb_lt_c : b < c := by dsimp [b, c]; nlinarith
+  exact ⟨a, b, c, ha_pos, hb_pos, hc_pos, hsum_abc, hp1_eq, hp2_eq, hb_lt_a, hb_lt_c⟩
+
+/-- Uniqueness of equilateral barycentrics (a,b,c) given coordinates (x,y).
+    The equilateral side-two triangle has vertices A=(0,0), B=(2,0), C=(1,√3). -/
+lemma equilateral_barycentrics_unique (p : ℝ × ℝ) (a b c a' b' c' : ℝ)
+    (hsum : a + b + c = 1) (hsum' : a' + b' + c' = 1)
+    (hx : p.1 = 2*b + c) (hx' : p.1 = 2*b' + c')
+    (hy : p.2 = c * Real.sqrt 3) (hy' : p.2 = c' * Real.sqrt 3) (hsqrt3pos : Real.sqrt 3 ≠ 0 := by positivity) :
+    a = a' ∧ b = b' ∧ c = c' := by
+  have hc_eq : c = c' := by
+    calc
+      c = (c * Real.sqrt 3) / Real.sqrt 3 := by field_simp [hsqrt3pos]
+      _ = p.2 / Real.sqrt 3 := by rw [hy]
+      _ = c' := by rw [hy']; field_simp [hsqrt3pos]
+  have hb_eq : b = b' := by
+    calc b = (p.1 - c) / 2 := by nlinarith
+      _ = (p.1 - c') / 2 := by rw [hc_eq]
+      _ = b' := by nlinarith
+  have ha_eq : a = a' := by nlinarith
+  exact ⟨ha_eq, hb_eq, hc_eq⟩
+
+/-- The three centroid triangles are pairwise interior-disjoint
+    (no two can share an interior point because the minimum barycentric
+    coordinate differs for each piece). -/
+lemma centroid_triples_pairwise_disjoint : PairwiseInteriorDisjoint {centroid_ab, centroid_bc, centroid_ca} := by
+  intro t₁ ht₁ t₂ ht₂ hne h
+  rcases h with ⟨p, hp₁, hp₂⟩
+  have hmem1 : t₁ = centroid_ab ∨ t₁ = centroid_bc ∨ t₁ = centroid_ca := by
+    simp [Finset.mem_insert, Finset.mem_singleton] at ht₁; exact ht₁
+  have hmem2 : t₂ = centroid_ab ∨ t₂ = centroid_bc ∨ t₂ = centroid_ca := by
+    simp [Finset.mem_insert, Finset.mem_singleton] at ht₂; exact ht₂
+  rcases hmem1 with (h1|h1|h1) <;> rcases hmem2 with (h2|h2|h2)
+  · exfalso; exact hne (h1.trans h2.symm)
+  · subst h1; subst h2
+    rcases interior_centroid_ab_ineq p hp₁ with ⟨a₁, b₁, c₁, _, _, _, hsum₁, hx₁, hy₁, hc₁_lt_a₁, hc₁_lt_b₁⟩
+    rcases interior_centroid_bc_ineq p hp₂ with ⟨a₂, b₂, c₂, _, _, _, hsum₂, hx₂, hy₂, ha₂_lt_b₂, ha₂_lt_c₂⟩
+    rcases equilateral_barycentrics_unique p a₁ b₁ c₁ a₂ b₂ c₂ hsum₁ hsum₂ hx₁ hx₂ hy₁ hy₂ with ⟨ha_eq, _, hc_eq⟩
+    have : c₁ < c₁ := by
+      calc
+        c₁ < a₁ := hc₁_lt_a₁
+        _ = a₂ := ha_eq
+        _ < c₂ := ha₂_lt_c₂
+        _ = c₁ := hc_eq.symm
+    exact lt_irrefl _ this
+  · subst h1; subst h2
+    rcases interior_centroid_ab_ineq p hp₁ with ⟨a₁, b₁, c₁, _, _, _, hsum₁, hx₁, hy₁, hc₁_lt_a₁, hc₁_lt_b₁⟩
+    rcases interior_centroid_ca_ineq p hp₂ with ⟨a₂, b₂, c₂, _, _, _, hsum₂, hx₂, hy₂, hb₂_lt_a₂, hb₂_lt_c₂⟩
+    rcases equilateral_barycentrics_unique p a₁ b₁ c₁ a₂ b₂ c₂ hsum₁ hsum₂ hx₁ hx₂ hy₁ hy₂ with ⟨_, hb_eq, hc_eq⟩
+    have : c₁ < c₁ := by
+      calc
+        c₁ < b₁ := hc₁_lt_b₁
+        _ = b₂ := hb_eq
+        _ < c₂ := hb₂_lt_c₂
+        _ = c₁ := hc_eq.symm
+    exact lt_irrefl _ this
+  · subst h1; subst h2
+    rcases interior_centroid_bc_ineq p hp₁ with ⟨a₁, b₁, c₁, _, _, _, hsum₁, hx₁, hy₁, ha₁_lt_b₁, ha₁_lt_c₁⟩
+    rcases interior_centroid_ab_ineq p hp₂ with ⟨a₂, b₂, c₂, _, _, _, hsum₂, hx₂, hy₂, hc₂_lt_a₂, hc₂_lt_b₂⟩
+    rcases equilateral_barycentrics_unique p a₁ b₁ c₁ a₂ b₂ c₂ hsum₁ hsum₂ hx₁ hx₂ hy₁ hy₂ with ⟨ha_eq, _, hc_eq⟩
+    have : a₁ < a₁ := by
+      calc
+        a₁ < c₁ := ha₁_lt_c₁
+        _ = c₂ := hc_eq
+        _ < a₂ := hc₂_lt_a₂
+        _ = a₁ := ha_eq.symm
+    exact lt_irrefl _ this
+  · exfalso; exact hne (h1.trans h2.symm)
+  · subst h1; subst h2
+    rcases interior_centroid_bc_ineq p hp₁ with ⟨a₁, b₁, c₁, _, _, _, hsum₁, hx₁, hy₁, ha₁_lt_b₁, ha₁_lt_c₁⟩
+    rcases interior_centroid_ca_ineq p hp₂ with ⟨a₂, b₂, c₂, _, _, _, hsum₂, hx₂, hy₂, hb₂_lt_a₂, hb₂_lt_c₂⟩
+    rcases equilateral_barycentrics_unique p a₁ b₁ c₁ a₂ b₂ c₂ hsum₁ hsum₂ hx₁ hx₂ hy₁ hy₂ with ⟨ha_eq, hb_eq, _⟩
+    have : a₁ < a₁ := by
+      calc
+        a₁ < b₁ := ha₁_lt_b₁
+        _ = b₂ := hb_eq
+        _ < a₂ := hb₂_lt_a₂
+        _ = a₁ := ha_eq.symm
+    exact lt_irrefl _ this
+  · subst h1; subst h2
+    rcases interior_centroid_ca_ineq p hp₁ with ⟨a₁, b₁, c₁, _, _, _, hsum₁, hx₁, hy₁, hb₁_lt_a₁, hb₁_lt_c₁⟩
+    rcases interior_centroid_ab_ineq p hp₂ with ⟨a₂, b₂, c₂, _, _, _, hsum₂, hx₂, hy₂, hc₂_lt_a₂, hc₂_lt_b₂⟩
+    rcases equilateral_barycentrics_unique p a₁ b₁ c₁ a₂ b₂ c₂ hsum₁ hsum₂ hx₁ hx₂ hy₁ hy₂ with ⟨_, hb_eq, hc_eq⟩
+    have : b₁ < b₁ := by
+      calc
+        b₁ < c₁ := hb₁_lt_c₁
+        _ = c₂ := hc_eq
+        _ < b₂ := hc₂_lt_b₂
+        _ = b₁ := hb_eq.symm
+    exact lt_irrefl _ this
+  · subst h1; subst h2
+    rcases interior_centroid_ca_ineq p hp₁ with ⟨a₁, b₁, c₁, _, _, _, hsum₁, hx₁, hy₁, hb₁_lt_a₁, hb₁_lt_c₁⟩
+    rcases interior_centroid_bc_ineq p hp₂ with ⟨a₂, b₂, c₂, _, _, _, hsum₂, hx₂, hy₂, ha₂_lt_b₂, ha₂_lt_c₂⟩
+    rcases equilateral_barycentrics_unique p a₁ b₁ c₁ a₂ b₂ c₂ hsum₁ hsum₂ hx₁ hx₂ hy₁ hy₂ with ⟨ha_eq, hb_eq, _⟩
+    have : b₁ < b₁ := by
+      calc
+        b₁ < a₁ := hb₁_lt_a₁
+        _ = a₂ := ha_eq
+        _ < b₂ := ha₂_lt_b₂
+        _ = b₁ := hb_eq.symm
+    exact lt_irrefl _ this
+  · exfalso; exact hne (h1.trans h2.symm)
+
+/-- The centroid decomposition gives a geometric tiling of the equilateral
+    triangle (side 2) by 3 congruent isosceles triangles. -/
+lemma n_three_geometric_tiling : GeometricTriangleTilable 3 := by
+  refine ⟨equilateral_side_two, centroid_ab, ⟨{
+    pieces := {centroid_ab, centroid_bc, centroid_ca}
+    card_eq := by
+      have h_ne_ab_bc : centroid_ab ≠ centroid_bc := by
+        intro h
+        have hd : centroid_ab.A.1 ≠ centroid_bc.A.1 := by unfold centroid_ab centroid_bc; norm_num
+        exact hd (by simpa [h])
+      have h_ne_ab_ca : centroid_ab ≠ centroid_ca := by
+        intro h
+        have hd : centroid_ab.A.1 ≠ centroid_ca.A.1 := by unfold centroid_ab centroid_ca; norm_num
+        exact hd (by simpa [h])
+      have h_ne_bc_ca : centroid_bc ≠ centroid_ca := by
+        intro h
+        have hd : centroid_bc.A.1 ≠ centroid_ca.A.1 := by unfold centroid_bc centroid_ca; norm_num
+        exact hd (by simpa [h])
+      simp [h_ne_ab_bc, h_ne_ab_ca, h_ne_bc_ca]
+    all_congruent := by
+      intro t ht
+      simp [Finset.mem_insert, Finset.mem_singleton] at ht
+      rcases ht with (rfl|rfl|rfl)
+      · exact Or.inl ⟨rfl, rfl, rfl⟩
+      · exact centroid_bc_congruent_ab
+      · exact centroid_ca_congruent_ab
+    area_eq := by
+      have h_ne_ab_bc : centroid_ab ≠ centroid_bc := by
+        intro h
+        have hd : centroid_ab.A.1 ≠ centroid_bc.A.1 := by unfold centroid_ab centroid_bc; norm_num
+        exact hd (by simpa [h])
+      have h_ne_ab_ca : centroid_ab ≠ centroid_ca := by
+        intro h
+        have hd : centroid_ab.A.1 ≠ centroid_ca.A.1 := by unfold centroid_ab centroid_ca; norm_num
+        exact hd (by simpa [h])
+      have h_ne_bc_ca : centroid_bc ≠ centroid_ca := by
+        intro h
+        have hd : centroid_bc.A.1 ≠ centroid_ca.A.1 := by unfold centroid_bc centroid_ca; norm_num
+        exact hd (by simpa [h])
+      calc
+        Finset.sum ({centroid_ab, centroid_bc, centroid_ca} : Finset Triangle) signed_area
+            = signed_area centroid_ab + Finset.sum ({centroid_bc, centroid_ca} : Finset Triangle) signed_area := by
+              simp [Finset.sum_insert, h_ne_ab_bc, h_ne_ab_ca]
+        _ = signed_area centroid_ab + (signed_area centroid_bc + signed_area centroid_ca) := by
+          simp [Finset.sum_insert, Finset.sum_singleton, h_ne_bc_ca]
+        _ = signed_area centroid_ab + signed_area centroid_bc + signed_area centroid_ca := by ring
+        _ = Real.sqrt 3 / 3 + Real.sqrt 3 / 3 + Real.sqrt 3 / 3 := by rw [signed_area_centroid_ab, signed_area_centroid_bc, signed_area_centroid_ca]
+        _ = Real.sqrt 3 := by ring
+        _ = signed_area equilateral_side_two := by rw [signed_area_equilateral_side_two]
+    subset_T := by
+      intro t ht
+      simp [Finset.mem_insert, Finset.mem_singleton] at ht
+      rcases ht with (rfl|rfl|rfl)
+      · exact centroid_ab_subset_T
+      · exact centroid_bc_subset_T
+      · exact centroid_ca_subset_T
+    cover_T := centroid_vertices_cover_T
+    pairwise_disjoint := centroid_triples_pairwise_disjoint
+  }⟩⟩
+
+/-
+! 6a² geometric constructive tiling: median decomposition
+
+The three medians of an equilateral triangle intersect at the centroid and
+divide it into 6 congruent 30-60-90 right triangles.  Each piece is congruent
+to the right triangle with legs 1 and 1/√3 (hypotenuse 2/√3).
+
+TODO: Formalise the 6 piece construction (vertices: triangle vertices +
+midpoints + centroid).  This requires defining 6 triangles and proving
+they are congruent and pairwise disjoint.
+
+For now, we mark this as future work.
+-/
+
+/-
+! Classification-form lemmas
+
+n is tilable by congruent triangles implies n ∈ {a²+b², 2a², 3a², 6a², a²}
+(Beeson's theorem, forward direction — not yet formalised).
+
+As a partial step, we provide computable checks that 7 and 11 are not in
+the classification forms.  These would suffice to prove the sorries below
+once the forward direction is established.
+-/
+
+lemma not_in_classification_forms_7 : ¬ (∃ (a b : ℕ), a^2 + b^2 = 7) ∧ ¬ (∃ (a : ℕ), 2*a^2 = 7) ∧
+  ¬ (∃ (a : ℕ), 3*a^2 = 7) ∧ ¬ (∃ (a : ℕ), 6*a^2 = 7) ∧ ¬ (∃ (a : ℕ), a^2 = 7) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · rintro ⟨a, b, h⟩
+    have ha_sq_le_7 : a^2 ≤ 7 := by
+      have : b^2 ≥ 0 := Nat.zero_le _
+      omega
+    have ha_lt_3 : a < 3 := by
+      by_contra! hc
+      have h_a_ge_3 : a ≥ 3 := by omega
+      have ha_sq_ge_9 : a^2 ≥ 9 := Nat.pow_le_pow_left h_a_ge_3 2
+      omega
+    have hb_sq_le_7 : b^2 ≤ 7 := by
+      have : a^2 ≥ 0 := Nat.zero_le _
+      omega
+    have hb_lt_3 : b < 3 := by
+      by_contra! hc
+      have h_b_ge_3 : b ≥ 3 := by omega
+      have hb_sq_ge_9 : b^2 ≥ 9 := Nat.pow_le_pow_left h_b_ge_3 2
+      omega
+    have h_all : ((Finset.range 3).product (Finset.range 3)).filter (λ ⟨x, y⟩ => x^2 + y^2 = 7) = ∅ := by decide
+    have hm : (a, b) ∈ ((Finset.range 3).product (Finset.range 3)).filter (λ ⟨x, y⟩ => x^2 + y^2 = 7) := by
+      refine Finset.mem_filter.mpr ⟨Finset.mem_product.mpr ⟨Finset.mem_range.mpr ha_lt_3, Finset.mem_range.mpr hb_lt_3⟩, h⟩
+    rw [h_all] at hm; simp at hm
+  · rintro ⟨a, h⟩
+    have ha_lt_2 : a < 2 := by
+      by_contra! hc
+      have h_a_ge_2 : a ≥ 2 := by omega
+      have ha_sq_ge_4 : a^2 ≥ 4 := by
+        have h_mul : a*a ≥ 2*2 := Nat.mul_le_mul h_a_ge_2 h_a_ge_2
+        simpa [sq] using h_mul
+      have : 2*a^2 ≥ 8 := by nlinarith
+      omega
+    have h_all : (Finset.range 2).filter (λ x => 2*x^2 = 7) = ∅ := by decide
+    have hm : a ∈ (Finset.range 2).filter (λ x => 2*x^2 = 7) := by
+      refine Finset.mem_filter.mpr ⟨Finset.mem_range.mpr ha_lt_2, h⟩
+    rw [h_all] at hm; simp at hm
+  · rintro ⟨a, h⟩
+    have ha_lt_2 : a < 2 := by
+      by_contra! hc
+      have h_a_ge_2 : a ≥ 2 := by omega
+      have ha_sq_ge_4 : a^2 ≥ 4 := by
+        have h_mul : a*a ≥ 2*2 := Nat.mul_le_mul h_a_ge_2 h_a_ge_2
+        simpa [sq] using h_mul
+      have : 3*a^2 ≥ 12 := by nlinarith
+      omega
+    have h_all : (Finset.range 2).filter (λ x => 3*x^2 = 7) = ∅ := by decide
+    have hm : a ∈ (Finset.range 2).filter (λ x => 3*x^2 = 7) := by
+      refine Finset.mem_filter.mpr ⟨Finset.mem_range.mpr ha_lt_2, h⟩
+    rw [h_all] at hm; simp at hm
+  · rintro ⟨a, h⟩
+    have ha_lt_2 : a < 2 := by
+      by_contra! hc
+      have h_a_ge_2 : a ≥ 2 := by omega
+      have ha_sq_ge_4 : a^2 ≥ 4 := by
+        have h_mul : a*a ≥ 2*2 := Nat.mul_le_mul h_a_ge_2 h_a_ge_2
+        simpa [sq] using h_mul
+      have : 6*a^2 ≥ 24 := by nlinarith
+      omega
+    have h_all : (Finset.range 2).filter (λ x => 6*x^2 = 7) = ∅ := by decide
+    have hm : a ∈ (Finset.range 2).filter (λ x => 6*x^2 = 7) := by
+      refine Finset.mem_filter.mpr ⟨Finset.mem_range.mpr ha_lt_2, h⟩
+    rw [h_all] at hm; simp at hm
+  · rintro ⟨a, h⟩
+    have ha_lt_3 : a < 3 := by
+      by_contra! hc
+      have h_a_ge_3 : a ≥ 3 := by omega
+      have ha_sq_ge_9 : a^2 ≥ 9 := Nat.pow_le_pow_left h_a_ge_3 2
+      omega
+    have h_all : (Finset.range 3).filter (λ x => x^2 = 7) = ∅ := by decide
+    have hm : a ∈ (Finset.range 3).filter (λ x => x^2 = 7) := by
+      refine Finset.mem_filter.mpr ⟨Finset.mem_range.mpr ha_lt_3, h⟩
+    rw [h_all] at hm; simp at hm
+
+lemma not_in_classification_forms_11 : ¬ (∃ (a b : ℕ), a^2 + b^2 = 11) ∧ ¬ (∃ (a : ℕ), 2*a^2 = 11) ∧
+  ¬ (∃ (a : ℕ), 3*a^2 = 11) ∧ ¬ (∃ (a : ℕ), 6*a^2 = 11) ∧ ¬ (∃ (a : ℕ), a^2 = 11) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · rintro ⟨a, b, h⟩
+    have ha_sq_le_11 : a^2 ≤ 11 := by
+      have : b^2 ≥ 0 := Nat.zero_le _
+      omega
+    have ha_lt_4 : a < 4 := by
+      by_contra! hc
+      have h_a_ge_4 : a ≥ 4 := by omega
+      have ha_sq_ge_16 : a^2 ≥ 16 := Nat.pow_le_pow_left h_a_ge_4 2
+      omega
+    have hb_sq_le_11 : b^2 ≤ 11 := by
+      have : a^2 ≥ 0 := Nat.zero_le _
+      omega
+    have hb_lt_4 : b < 4 := by
+      by_contra! hc
+      have h_b_ge_4 : b ≥ 4 := by omega
+      have hb_sq_ge_16 : b^2 ≥ 16 := Nat.pow_le_pow_left h_b_ge_4 2
+      omega
+    have h_all : ((Finset.range 4).product (Finset.range 4)).filter (λ ⟨x, y⟩ => x^2 + y^2 = 11) = ∅ := by decide
+    have hm : (a, b) ∈ ((Finset.range 4).product (Finset.range 4)).filter (λ ⟨x, y⟩ => x^2 + y^2 = 11) := by
+      refine Finset.mem_filter.mpr ⟨Finset.mem_product.mpr ⟨Finset.mem_range.mpr ha_lt_4, Finset.mem_range.mpr hb_lt_4⟩, h⟩
+    rw [h_all] at hm; simp at hm
+  · rintro ⟨a, h⟩
+    have ha_lt_3 : a < 3 := by
+      by_contra! hc
+      have h_a_ge_3 : a ≥ 3 := by omega
+      have ha_sq_ge_9 : a^2 ≥ 9 := by
+        have h_mul : a*a ≥ 3*3 := Nat.mul_le_mul h_a_ge_3 h_a_ge_3
+        simpa [sq] using h_mul
+      have : 2*a^2 ≥ 18 := by nlinarith
+      omega
+    have h_all : (Finset.range 3).filter (λ x => 2*x^2 = 11) = ∅ := by decide
+    have hm : a ∈ (Finset.range 3).filter (λ x => 2*x^2 = 11) := by
+      refine Finset.mem_filter.mpr ⟨Finset.mem_range.mpr ha_lt_3, h⟩
+    rw [h_all] at hm; simp at hm
+  · rintro ⟨a, h⟩
+    have ha_lt_2 : a < 2 := by
+      by_contra! hc
+      have h_a_ge_2 : a ≥ 2 := by omega
+      have ha_sq_ge_4 : a^2 ≥ 4 := by
+        have h_mul : a*a ≥ 2*2 := Nat.mul_le_mul h_a_ge_2 h_a_ge_2
+        simpa [sq] using h_mul
+      have : 3*a^2 ≥ 12 := by nlinarith
+      omega
+    have h_all : (Finset.range 2).filter (λ x => 3*x^2 = 11) = ∅ := by decide
+    have hm : a ∈ (Finset.range 2).filter (λ x => 3*x^2 = 11) := by
+      refine Finset.mem_filter.mpr ⟨Finset.mem_range.mpr ha_lt_2, h⟩
+    rw [h_all] at hm; simp at hm
+  · rintro ⟨a, h⟩
+    have ha_lt_2 : a < 2 := by
+      by_contra! hc
+      have h_a_ge_2 : a ≥ 2 := by omega
+      have ha_sq_ge_4 : a^2 ≥ 4 := by
+        have h_mul : a*a ≥ 2*2 := Nat.mul_le_mul h_a_ge_2 h_a_ge_2
+        simpa [sq] using h_mul
+      have : 6*a^2 ≥ 24 := by nlinarith
+      omega
+    have h_all : (Finset.range 2).filter (λ x => 6*x^2 = 11) = ∅ := by decide
+    have hm : a ∈ (Finset.range 2).filter (λ x => 6*x^2 = 11) := by
+      refine Finset.mem_filter.mpr ⟨Finset.mem_range.mpr ha_lt_2, h⟩
+    rw [h_all] at hm; simp at hm
+  · rintro ⟨a, h⟩
+    have ha_lt_4 : a < 4 := by
+      by_contra! hc
+      have h_a_ge_4 : a ≥ 4 := by omega
+      have ha_sq_ge_16 : a^2 ≥ 16 := Nat.pow_le_pow_left h_a_ge_4 2
+      omega
+    have h_all : (Finset.range 4).filter (λ x => x^2 = 11) = ∅ := by decide
+    have hm : a ∈ (Finset.range 4).filter (λ x => x^2 = 11) := by
+      refine Finset.mem_filter.mpr ⟨Finset.mem_range.mpr ha_lt_4, h⟩
+    rw [h_all] at hm; simp at hm
+
 /-! ### Geometric obstructions
 
 The Erdős #634 problem asks for tilings by CONGRUENT triangles under geometric
