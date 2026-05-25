@@ -6,13 +6,17 @@ open scoped Real
 noncomputable section
 
 /-
-  Population Member 09: Strategy = Structural refinement + classification scaffolding
-  Approach: Add structural lemmas `geometric_tilable_positive` and
-    `geometric_tilable_one`. Add `equiv_geometric_tilable` for the
-    equivalence between geometric tilability via the equilateral shape and
-    sum-of-two-squares (forward direction only; reverse requires Beeson).
-    Remove the `geometric_area_scaling` stub (moved to future work).
-    The core 3 obstruction sorries remain (Beeson's theorem).
+  Population Member 09: Strategy = n=2 bisection + Congruent fix + geometric gap
+  Approach:
+    • Fix Congruent to check all 6 vertex permutations (SSS congruence),
+      enabling congruence checking of reflected triangles.
+    • Prove n=2 is geometrically tilable: bisect equilateral side 2 by altitude
+      into 2 congruent 30-60-90 right triangles.
+    • Prove the 1D strip construction (used in tilable_all_pos) is NOT a
+      geometric tiling: piece vertex C lies outside the target (subset_T fails).
+      This formalizes why the weak TriangleTilable trivializes the problem
+      but GeometricTriangleTilable does not.
+    • Keep the 3 sorries for the deep geometric obstruction (Beeson).
   Rating (initial): Elo 1750
 -/
 
@@ -34,11 +38,16 @@ def distSq (P Q : ℝ × ℝ) : ℝ :=
 def signed_area (t : Triangle) : ℝ :=
   (t.A.1 * (t.B.2 - t.C.2) + t.B.1 * (t.C.2 - t.A.2) + t.C.1 * (t.A.2 - t.B.2)) / 2
 
-/-- Two triangles are congruent if their three side lengths (squared) match pairwise. -/
+/-- Two triangles are congruent if their three side lengths (squared) match pairwise
+    under some permutation of vertices (SSS congruence).
+    Checks all 6 permutations to handle reflected / opposite-orientation triangles. -/
 def Congruent (T₁ T₂ : Triangle) : Prop :=
   (distSq T₁.A T₁.B = distSq T₂.A T₂.B ∧ distSq T₁.B T₁.C = distSq T₂.B T₂.C ∧ distSq T₁.C T₁.A = distSq T₂.C T₂.A) ∨
   (distSq T₁.A T₁.B = distSq T₂.B T₂.C ∧ distSq T₁.B T₁.C = distSq T₂.C T₂.A ∧ distSq T₁.C T₁.A = distSq T₂.A T₂.B) ∨
-  (distSq T₁.A T₁.B = distSq T₂.C T₂.A ∧ distSq T₁.B T₁.C = distSq T₂.A T₂.B ∧ distSq T₁.C T₁.A = distSq T₂.B T₂.C)
+  (distSq T₁.A T₁.B = distSq T₂.C T₂.A ∧ distSq T₁.B T₁.C = distSq T₂.A T₂.B ∧ distSq T₁.C T₁.A = distSq T₂.B T₂.C) ∨
+  (distSq T₁.A T₁.B = distSq T₂.A T₂.C ∧ distSq T₁.B T₁.C = distSq T₂.C T₂.B ∧ distSq T₁.C T₁.A = distSq T₂.B T₂.A) ∨
+  (distSq T₁.A T₁.B = distSq T₂.B T₂.A ∧ distSq T₁.B T₁.C = distSq T₂.A T₂.C ∧ distSq T₁.C T₁.A = distSq T₂.C T₂.B) ∨
+  (distSq T₁.A T₁.B = distSq T₂.C T₂.B ∧ distSq T₁.B T₁.C = distSq T₂.B T₂.A ∧ distSq T₁.C T₁.A = distSq T₂.A T₂.C)
 
 /-- A tiling of a triangle T by n triangles each congruent to shape S (weak definition:
     no disjointness or covering constraints). -/
@@ -1134,6 +1143,187 @@ lemma squares_constructive_geometric (k : ℕ) (hk : k > 0) : GeometricTriangleT
 lemma squares_constructive (k : ℕ) (hk : k > 0) : TriangleTilable (k^2) :=
   geometric_implies_weak (k^2) (squares_constructive_geometric k hk)
 
+/-! ### n=2: geometric tiling by bisection of equilateral triangle
+
+Bisecting an equilateral triangle of side 2 along the altitude from the
+apex to the midpoint of the base yields 2 congruent 30-60-90 right triangles.
+This proves GeometricTriangleTilable 2. -/
+
+/-- Equilateral triangle of side length 2.
+    Bisecting by the altitude from C to midpoint of AB (1,0)
+    yields 2 congruent 30-60-90 right triangles. -/
+noncomputable def equilateral_side_two : Triangle :=
+  { A := (0, 0)
+    B := (2, 0)
+    C := (1, Real.sqrt 3)
+    nondegenerate := by
+      have h : (0 : ℝ) * (0 - Real.sqrt 3) + 2 * (Real.sqrt 3 - 0) + 1 * (0 - 0) = 2 * Real.sqrt 3 := by ring
+      rw [h]; positivity }
+
+lemma signed_area_equilateral_side_two : signed_area equilateral_side_two = Real.sqrt 3 := by
+  unfold signed_area equilateral_side_two; ring
+
+/-- Left half of equilateral side 2: A=(0,0), B=(1,0), C=(1,√3).
+    A 30-60-90 right triangle. -/
+noncomputable def bisect_left : Triangle :=
+  { A := (0, 0)
+    B := (1, 0)
+    C := (1, Real.sqrt 3)
+    nondegenerate := by
+      have h : (0 : ℝ) * (0 - Real.sqrt 3) + 1 * (Real.sqrt 3 - 0) + 1 * (0 - 0) = Real.sqrt 3 := by ring
+      rw [h]; positivity }
+
+lemma signed_area_bisect_left : signed_area bisect_left = Real.sqrt 3 / 2 := by
+  unfold signed_area bisect_left; ring
+
+/-- Left half is congruent to right_triangle under the reflection permutation D5
+    (swap A and B on right_triangle). -/
+lemma bisect_left_congruent : Congruent bisect_left right_triangle := by
+  unfold Congruent
+  refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ?_))))
+  dsimp [bisect_left, right_triangle, distSq]
+  norm_num
+
+/-- Right half of equilateral side 2: A=(1,0), B=(2,0), C=(1,√3).
+    A 30-60-90 right triangle. -/
+noncomputable def bisect_right : Triangle :=
+  { A := (1, 0)
+    B := (2, 0)
+    C := (1, Real.sqrt 3)
+    nondegenerate := by
+      have h : (1 : ℝ) * (0 - Real.sqrt 3) + 2 * (Real.sqrt 3 - 0) + 1 * (0 - 0) = Real.sqrt 3 := by ring
+      rw [h]; positivity }
+
+lemma signed_area_bisect_right : signed_area bisect_right = Real.sqrt 3 / 2 := by
+  unfold signed_area bisect_right; ring
+
+/-- Right half is congruent to right_triangle under identity permutation D1. -/
+lemma bisect_right_congruent : Congruent bisect_right right_triangle := by
+  have hsq3 : (Real.sqrt 3) ^ 2 = (3 : ℝ) := Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)
+  unfold Congruent
+  refine Or.inl ⟨?_, ?_, ?_⟩
+  · dsimp [bisect_right, right_triangle, distSq]; norm_num
+  · dsimp [bisect_right, right_triangle, distSq]; nlinarith
+  · dsimp [bisect_right, right_triangle, distSq]; norm_num
+
+/-- The two bisection pieces are pairwise interior-disjoint (separated by x=1). -/
+lemma bisect_pairwise_disjoint : PairwiseInteriorDisjoint {bisect_left, bisect_right} := by
+  intro t₁ ht₁ t₂ ht₂ hne
+  intro h
+  rcases h with ⟨p, hp₁, hp₂⟩
+  have hcases : (t₁ = bisect_left ∧ t₂ = bisect_right) ∨ (t₁ = bisect_right ∧ t₂ = bisect_left) := by
+    simp [Finset.mem_insert, Finset.mem_singleton] at ht₁ ht₂
+    rcases ht₁ with (rfl|rfl) <;> rcases ht₂ with (rfl|rfl) <;> try { exfalso; exact hne rfl }
+    · exact Or.inl ⟨rfl, rfl⟩
+    · exact Or.inr ⟨rfl, rfl⟩
+  rcases hcases with (⟨rfl, rfl⟩|⟨rfl, rfl⟩)
+  · -- left then right: interiors separated by x=1
+    rcases hp₁ with ⟨α₁, β₁, γ₁, hα₁, hβ₁, hγ₁, hsum₁, hx₁, hy₁⟩
+    have hx_lt_one : p.1 < 1 := by
+      dsimp [bisect_left] at hx₁ hy₁
+      have h_eq : p.1 = β₁ + γ₁ := by nlinarith
+      rw [h_eq]
+      nlinarith
+    rcases hp₂ with ⟨α₂, β₂, γ₂, hα₂, hβ₂, hγ₂, hsum₂, hx₂, hy₂⟩
+    have hx_gt_one : p.1 > 1 := by
+      dsimp [bisect_right] at hx₂ hy₂
+      have h_eq : p.1 = α₂ + 2 * β₂ + γ₂ := by nlinarith
+      rw [h_eq]
+      have : α₂ = 1 - β₂ - γ₂ := by nlinarith
+      rw [this]
+      nlinarith
+    nlinarith
+  · -- right then left: symmetric
+    rcases hp₁ with ⟨α₁, β₁, γ₁, hα₁, hβ₁, hγ₁, hsum₁, hx₁, hy₁⟩
+    have hx_gt_one : p.1 > 1 := by
+      dsimp [bisect_right] at hx₁ hy₁
+      have h_eq : p.1 = α₁ + 2 * β₁ + γ₁ := by nlinarith
+      rw [h_eq]
+      have : α₁ = 1 - β₁ - γ₁ := by nlinarith
+      rw [this]
+      nlinarith
+    rcases hp₂ with ⟨α₂, β₂, γ₂, hα₂, hβ₂, hγ₂, hsum₂, hx₂, hy₂⟩
+    have hx_lt_one : p.1 < 1 := by
+      dsimp [bisect_left] at hx₂ hy₂
+      have h_eq : p.1 = β₂ + γ₂ := by nlinarith
+      rw [h_eq]
+      nlinarith
+    nlinarith
+
+/-- The bisection proves GeometricTriangleTilable 2. -/
+lemma n_two_geometric_tiling : GeometricTriangleTilable 2 := by
+  refine ⟨equilateral_side_two, right_triangle, ⟨{
+    pieces := {bisect_left, bisect_right}
+    card_eq := by
+      have h_ne : bisect_left ≠ bisect_right := by
+        intro h
+        have : bisect_left.A = bisect_right.A := by simpa [h]
+        dsimp [bisect_left, bisect_right] at this
+        norm_num at this
+      simp [h_ne]
+    all_congruent := by
+      intro t ht
+      simp [Finset.mem_insert, Finset.mem_singleton] at ht
+      rcases ht with (rfl|rfl)
+      · exact bisect_left_congruent
+      · exact bisect_right_congruent
+    area_eq := by
+      have h_ne : bisect_left ≠ bisect_right := by
+        intro h
+        have : bisect_left.A = bisect_right.A := by simpa [h]
+        dsimp [bisect_left, bisect_right] at this
+        norm_num at this
+      calc
+        Finset.sum ({bisect_left, bisect_right} : Finset Triangle) signed_area
+            = signed_area bisect_left + signed_area bisect_right := by simp [h_ne]
+        _ = Real.sqrt 3 / 2 + Real.sqrt 3 / 2 := by rw [signed_area_bisect_left, signed_area_bisect_right]
+        _ = Real.sqrt 3 := by ring
+        _ = signed_area equilateral_side_two := by rw [signed_area_equilateral_side_two]
+    subset_T := by
+      intro t ht
+      simp [Finset.mem_insert, Finset.mem_singleton] at ht
+      rcases ht with (rfl|rfl)
+      · -- bisect_left: A=(0,0), B=(1,0), C=(1,√3) inside equilateral_side_two
+        refine ⟨?_, ?_, ?_⟩
+        · -- A=(0,0) = T.A → barycentric (1,0,0)
+          refine ⟨1, 0, 0, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
+          · simp [bisect_left, equilateral_side_two]
+          · simp [bisect_left, equilateral_side_two]
+        · -- B=(1,0) = midpoint of T.AB → barycentric (1/2,1/2,0)
+          refine ⟨1/2, 1/2, 0, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
+          · simp [bisect_left, equilateral_side_two]; ring
+          · simp [bisect_left, equilateral_side_two]; ring
+        · -- C=(1,√3) = T.C → barycentric (0,0,1)
+          refine ⟨0, 0, 1, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
+          · simp [bisect_left, equilateral_side_two]
+          · simp [bisect_left, equilateral_side_two]
+      · -- bisect_right: A=(1,√3), B=(2,0), C=(1,0) inside equilateral_side_two
+        refine ⟨?_, ?_, ?_⟩
+        · -- A=(1,√3) = T.C → barycentric (0,0,1)
+          refine ⟨0, 0, 1, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
+          · simp [bisect_right, equilateral_side_two]
+          · simp [bisect_right, equilateral_side_two]
+        · -- B=(2,0) = T.B → barycentric (0,1,0)
+          refine ⟨0, 1, 0, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
+          · simp [bisect_right, equilateral_side_two]
+          · simp [bisect_right, equilateral_side_two]
+        · -- C=(1,0) = midpoint of T.AB → barycentric (1/2,1/2,0)
+          refine ⟨1/2, 1/2, 0, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
+          · simp [bisect_right, equilateral_side_two]; ring
+          · simp [bisect_right, equilateral_side_two]; ring
+    cover_T := by
+      have hT_A : equilateral_side_two.A ∈ ({bisect_left.A, bisect_left.B, bisect_left.C} : Finset (ℝ × ℝ)) := by
+        simp [bisect_left, equilateral_side_two]
+      have hT_B : equilateral_side_two.B ∈ ({bisect_right.A, bisect_right.B, bisect_right.C} : Finset (ℝ × ℝ)) := by
+        simp [bisect_right, equilateral_side_two]
+      have hT_C : equilateral_side_two.C ∈ ({bisect_left.A, bisect_left.B, bisect_left.C} : Finset (ℝ × ℝ)) := by
+        simp [bisect_left, equilateral_side_two]
+      refine ⟨Finset.mem_biUnion.mpr ⟨bisect_left, by simp, hT_A⟩,
+              Finset.mem_biUnion.mpr ⟨bisect_right, by simp, hT_B⟩,
+              Finset.mem_biUnion.mpr ⟨bisect_left, by simp, hT_C⟩⟩
+    pairwise_disjoint := bisect_pairwise_disjoint
+  }⟩⟩
+
 /-- A right triangle of legs 1 and √3 (30-60-90) translated by n units to the right.
     All such triangles are congruent to each other and to right_triangle. -/
 noncomputable def translate_right_triangle (n : ℕ) : Triangle :=
@@ -1172,6 +1362,89 @@ noncomputable def right_triangle_sized (a b : ℝ) (ha : a ≠ 0) (hb : b ≠ 0)
 lemma signed_area_right_triangle_sized (a b : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) :
     signed_area (right_triangle_sized a b ha hb) = (a * b) / 2 := by
   unfold signed_area right_triangle_sized; ring
+
+/-! ### Geometric gap: 1D strip construction fails subset_T
+
+The 1D strip construction used in `tilable_all_pos` arranges right triangles
+along the x-axis. The last piece's apex (n-1, √3) lies outside the target
+right triangle because (n-1)/n + 1 > 1. The lemmas below formalize this
+barycentric coordinate violation and prove `not_subset_T_strip_construction`.
+-/
+
+/-- A point with x-coordinate exceeding the base width of a right triangle
+    cannot lie inside it (barycentric β > 1). -/
+lemma point_not_in_right_triangle_sized_x_gt_a (a b : ℝ) (ha : a > 0) (hb : b > 0) (x y : ℝ) (hx : x > a) :
+    ¬ point_in_triangle (x, y) (right_triangle_sized a b ha.ne' hb.ne') := by
+  intro h
+  rcases h with ⟨α, β, γ, hα, hβ, hγ, hsum, hx_eq, hy_eq⟩
+  have hx_simp : x = β * a := by
+    dsimp [right_triangle_sized] at hx_eq
+    simpa using hx_eq
+  have hβgt1 : β > 1 := by
+    by_contra! hle
+    have : β * a ≤ a := by
+      nlinarith
+    nlinarith
+  have hβle1 : β ≤ 1 := by
+    nlinarith
+  nlinarith
+
+/-- A point with x/a + y/b > 1 (the complementary barycentric coordinate is negative)
+    cannot lie inside this right triangle. -/
+lemma point_not_in_right_triangle_sized_bary_neg (a b : ℝ) (ha : a > 0) (hb : b > 0) (x y : ℝ)
+    (hsum : x / a + y / b > 1) (hx_nonneg : x ≥ 0) (hy_nonneg : y ≥ 0) :
+    ¬ point_in_triangle (x, y) (right_triangle_sized a b ha.ne' hb.ne') := by
+  intro h
+  rcases h with ⟨α, β, γ, hα, hβ, hγ, hsum_eq, hx_eq, hy_eq⟩
+  have hx_simp : x = β * a := by
+    dsimp [right_triangle_sized] at hx_eq
+    simpa using hx_eq
+  have hy_simp : y = γ * b := by
+    dsimp [right_triangle_sized] at hy_eq
+    simpa using hy_eq
+  have hβ_plus_γ_gt_one : β + γ > 1 := by
+    calc
+      β + γ = (β * a) / a + (γ * b) / b := by field_simp [ha.ne', hb.ne']
+      _ = x / a + y / b := by rw [hx_simp, hy_simp]
+      _ > 1 := hsum
+  have hβ_plus_γ_le_one : β + γ ≤ 1 := by
+    nlinarith
+  nlinarith
+
+/-- The 1D strip construction used in `tilable_all_pos` fails subset_T for any n > 1.
+    The vertex C of the last piece `translate_right_triangle (n-1)` lies outside the
+    target right triangle because (n-1)/n + √3/√3 = (2n-1)/n > 1. -/
+lemma not_subset_T_strip_construction (n : ℕ) (hn : n > 1) :
+    let T := right_triangle_sized (n : ℝ) (Real.sqrt 3) (by
+      have hn0 : n ≠ 0 := by omega
+      exact_mod_cast hn0) (by positivity : Real.sqrt 3 ≠ 0)
+    let pieces := (Finset.range n).map ⟨translate_right_triangle, translate_right_triangle_injective⟩
+    ¬ (∀ t ∈ pieces, point_in_triangle t.A T ∧ point_in_triangle t.B T ∧ point_in_triangle t.C T) := by
+  intro T pieces
+  have hn0ℕ : n > 0 := by omega
+  have hnℝ : (n : ℝ) > 0 := by exact_mod_cast hn0ℕ
+  have hsqrt3 : Real.sqrt 3 > 0 := by positivity
+  have h_last_piece : translate_right_triangle (n-1) ∈ pieces := by
+    dsimp [pieces]
+    apply Finset.mem_map.mpr
+    refine ⟨n-1, Finset.mem_range.mpr (by omega), rfl⟩
+  intro hsubset
+  rcases hsubset (translate_right_triangle (n-1)) h_last_piece with ⟨hA, hB, hC⟩
+  have hC_coords : (translate_right_triangle (n-1)).C = (((n-1 : ℕ) : ℝ), Real.sqrt 3) := rfl
+  have hC_out : ¬ point_in_triangle (((n-1 : ℕ) : ℝ), Real.sqrt 3) T := by
+    apply point_not_in_right_triangle_sized_bary_neg (n : ℝ) (Real.sqrt 3) hnℝ hsqrt3
+      ((n-1 : ℕ) : ℝ) (Real.sqrt 3)
+    · calc
+        ((n-1 : ℕ) : ℝ) / (n : ℝ) + Real.sqrt 3 / Real.sqrt 3
+            = ((n-1 : ℕ) : ℝ) / (n : ℝ) + 1 := by field_simp [hsqrt3.ne']
+        _ > 1 := by
+          have hpos_nm1 : (0 : ℝ) < ((n-1 : ℕ) : ℝ) := by exact_mod_cast (by omega : 0 < n-1)
+          have : ((n-1 : ℕ) : ℝ) / (n : ℝ) > 0 := div_pos hpos_nm1 hnℝ
+          nlinarith
+    · exact Nat.cast_nonneg _
+    · positivity
+  rw [hC_coords] at hC
+  exact hC_out hC
 
 /-- 2k² construction (Soifer): subdivide a right triangle into 2k²
     congruent 30-60-90 right triangles via an k×k grid with diagonal splits. -/
@@ -1334,75 +1607,14 @@ lemma tilable_all_pos (n : ℕ) (hn : n > 0) : TriangleTilable n := by
 
 The weak `Tiling` predicate (no disjointness, no covering) makes `tilable_all_pos`
 trivially true, which CONTRADICTS `not_tilable_7`/`not_tilable_11`. The real
-Erdős problem requires `GeometricTiling` constraints. We expose this gap explicitly.
+Erdős problem requires `GeometricTiling` constraints.
+
+`not_subset_T_strip_construction` shows the 1D strip construction used in
+`tilable_all_pos` fails the `subset_T` constraint: the last piece's apex
+lies outside the target triangle. Hence `tilable_all_pos` does NOT produce
+any `GeometricTiling`. The `GeometricTriangleTilable` predicate is the
+correct formalization of the Erdős problem.
 -/
-
-/-- If n is geometrically tilable, then n > 0 (a nondegenerate triangle
-    cannot be tiled by 0 pieces). -/
-lemma geometric_tilable_positive (n : ℕ) (h : GeometricTriangleTilable n) : n > 0 := by
-  rcases h with ⟨T, S, ⟨g⟩⟩
-  by_contra! H
-  have hzero : n = 0 := by omega
-  subst hzero
-  have hcard0 : g.pieces.card = 0 := g.card_eq
-  have hempty : g.pieces = ∅ := Finset.card_eq_zero.mp hcard0
-  have harea_eq := g.area_eq
-  rw [hempty] at harea_eq
-  simp at harea_eq
-  unfold signed_area at harea_eq
-  have hdet : (T.A.1 * (T.B.2 - T.C.2) + T.B.1 * (T.C.2 - T.A.2) + T.C.1 * (T.A.2 - T.B.2)) = 0 := by
-    nlinarith
-  exact T.nondegenerate hdet
-
-/-- 1 is geometrically tilable: tile any triangle T by itself (pieces = {T}). -/
-lemma geometric_tilable_one : GeometricTriangleTilable 1 := by
-  let T := equilateral
-  refine ⟨T, T, ⟨{
-    pieces := {T}
-    card_eq := by simp
-    all_congruent := by
-      intro t ht
-      simp at ht
-      subst ht
-      refine Or.inl ⟨?_, ?_, ?_⟩
-      · rfl
-      · rfl
-      · rfl
-    area_eq := by simp
-    subset_T := by
-      intro t ht
-      simp at ht
-      subst ht
-      have hp : point_in_triangle T.A T := by
-        refine ⟨1, 0, 0, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
-        · dsimp [T, equilateral]; norm_num
-        · dsimp [T, equilateral]; norm_num
-      have hp' : point_in_triangle T.B T := by
-        refine ⟨0, 1, 0, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
-        · dsimp [T, equilateral]; norm_num
-        · dsimp [T, equilateral]; norm_num
-      have hp'' : point_in_triangle T.C T := by
-        refine ⟨0, 0, 1, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
-        · dsimp [T, equilateral]; norm_num
-        · dsimp [T, equilateral]; norm_num
-      exact ⟨hp, hp', hp''⟩
-    cover_T := by
-      refine ⟨Finset.mem_biUnion.mpr ⟨T, by simp, ?_⟩,
-        Finset.mem_biUnion.mpr ⟨T, by simp, ?_⟩,
-        Finset.mem_biUnion.mpr ⟨T, by simp, ?_⟩⟩
-      · simp
-      · simp
-      · simp
-    pairwise_disjoint := by
-      intro t₁ ht₁ t₂ ht₂ hne
-      exfalso; exact hne (by
-        simp at ht₁ ht₂
-        subst ht₁; subst ht₂; rfl)
-  }⟩⟩
-
-/-- Any positive square k² is geometrically tilable (by the equilateral grid). -/
-lemma geometric_tilable_square (k : ℕ) (hk : k > 0) : GeometricTriangleTilable (k^2) :=
-  squares_constructive_geometric k hk
 
 /-- Under the weak definition, 7 IS tilable (contradicting the intended obstruction). -/
 lemma tilable_7 : TriangleTilable 7 :=
