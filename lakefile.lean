@@ -3,7 +3,7 @@ open Lake DSL
 
 package "alphaproof-nexus" where
   -- Use existing .lake/packages layout
-  precompileModules := true
+  precompileModules := false
 
 require "leanprover-community" / "mathlib" @ git "master"
 

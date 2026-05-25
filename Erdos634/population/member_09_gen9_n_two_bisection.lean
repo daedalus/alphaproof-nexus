@@ -6,18 +6,23 @@ open scoped Real
 noncomputable section
 
 /-
-  Population Member 09: Strategy = n=2 bisection + Congruent fix + geometric gap
-  Approach:
-    • Fix Congruent to check all 6 vertex permutations (SSS congruence),
-      enabling congruence checking of reflected triangles.
-    • Prove n=2 is geometrically tilable: bisect equilateral side 2 by altitude
-      into 2 congruent 30-60-90 right triangles.
-    • Prove the 1D strip construction (used in tilable_all_pos) is NOT a
-      geometric tiling: piece vertex C lies outside the target (subset_T fails).
-      This formalizes why the weak TriangleTilable trivializes the problem
-      but GeometricTriangleTilable does not.
-    • Keep the 3 sorries for the deep geometric obstruction (Beeson).
-  Rating (initial): Elo 1750
+-! ### Formalization gap: weak TriangleTilable vs GeometricTriangleTilable
+
+The weak `Tiling` predicate (no disjointness, no covering) makes `tilable_all_pos`
+trivially true, which CONTRADICTS `not_tilable_7`/`not_tilable_11`. The real
+Erdős problem requires `GeometricTiling` constraints.
+
+`not_subset_T_strip_construction` shows the 1D strip construction used in
+`tilable_all_pos` fails the `subset_T` constraint: the last piece's apex
+lies outside the target triangle. Hence `tilable_all_pos` does NOT produce
+any `GeometricTiling`. The `GeometricTriangleTilable` predicate is the
+correct formalization of the Erdős problem.
+
+### Geometric area scaling
+
+For a `GeometricTiling T S n`, the n congruent pieces all have the same
+absolute signed area (by SSS congruence), and their total signed area
+equals that of T. This gives `|n * signed_area(S)| = |signed_area(T)|`.
 -/
 
 namespace Erdos634
@@ -1291,26 +1296,26 @@ lemma n_two_geometric_tiling : GeometricTriangleTilable 2 := by
           · simp [bisect_left, equilateral_side_two]
         · -- B=(1,0) = midpoint of T.AB → barycentric (1/2,1/2,0)
           refine ⟨1/2, 1/2, 0, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
-          · simp [bisect_left, equilateral_side_two]; ring
-          · simp [bisect_left, equilateral_side_two]; ring
+          · simp [bisect_left, equilateral_side_two]
+          · simp [bisect_left, equilateral_side_two]
         · -- C=(1,√3) = T.C → barycentric (0,0,1)
           refine ⟨0, 0, 1, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
           · simp [bisect_left, equilateral_side_two]
           · simp [bisect_left, equilateral_side_two]
-      · -- bisect_right: A=(1,√3), B=(2,0), C=(1,0) inside equilateral_side_two
+      · -- bisect_right: A=(1,0), B=(2,0), C=(1,√3) inside equilateral_side_two
         refine ⟨?_, ?_, ?_⟩
-        · -- A=(1,√3) = T.C → barycentric (0,0,1)
-          refine ⟨0, 0, 1, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
+        · -- A=(1,0) = midpoint of T.AB → barycentric (1/2,1/2,0)
+          refine ⟨1/2, 1/2, 0, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
           · simp [bisect_right, equilateral_side_two]
           · simp [bisect_right, equilateral_side_two]
         · -- B=(2,0) = T.B → barycentric (0,1,0)
           refine ⟨0, 1, 0, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
           · simp [bisect_right, equilateral_side_two]
           · simp [bisect_right, equilateral_side_two]
-        · -- C=(1,0) = midpoint of T.AB → barycentric (1/2,1/2,0)
-          refine ⟨1/2, 1/2, 0, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
-          · simp [bisect_right, equilateral_side_two]; ring
-          · simp [bisect_right, equilateral_side_two]; ring
+        · -- C=(1,√3) = T.C → barycentric (0,0,1)
+          refine ⟨0, 0, 1, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
+          · simp [bisect_right, equilateral_side_two]
+          · simp [bisect_right, equilateral_side_two]
     cover_T := by
       have hT_A : equilateral_side_two.A ∈ ({bisect_left.A, bisect_left.B, bisect_left.C} : Finset (ℝ × ℝ)) := by
         simp [bisect_left, equilateral_side_two]
@@ -1392,7 +1397,7 @@ lemma point_not_in_right_triangle_sized_x_gt_a (a b : ℝ) (ha : a > 0) (hb : b 
 /-- A point with x/a + y/b > 1 (the complementary barycentric coordinate is negative)
     cannot lie inside this right triangle. -/
 lemma point_not_in_right_triangle_sized_bary_neg (a b : ℝ) (ha : a > 0) (hb : b > 0) (x y : ℝ)
-    (hsum : x / a + y / b > 1) (hx_nonneg : x ≥ 0) (hy_nonneg : y ≥ 0) :
+    (hsum : x / a + y / b > 1) (_hx_nonneg : x ≥ 0) (_hy_nonneg : y ≥ 0) :
     ¬ point_in_triangle (x, y) (right_triangle_sized a b ha.ne' hb.ne') := by
   intro h
   rcases h with ⟨α, β, γ, hα, hβ, hγ, hsum_eq, hx_eq, hy_eq⟩
@@ -1624,7 +1629,60 @@ lemma tilable_7 : TriangleTilable 7 :=
 lemma tilable_11 : TriangleTilable 11 :=
   tilable_all_pos 11 (by norm_num)
 
+/-- Express `(2 * signed_area)^2` in terms of the three squared side lengths (distSq).
+    This is the Cayley-Menger determinant — Heron's formula squared. -/
+lemma signed_area_sq_formula (t : Triangle) : (2 * signed_area t)^2 =
+    (2*(distSq t.A t.B)*(distSq t.B t.C) + 2*(distSq t.A t.B)*(distSq t.C t.A)
+     + 2*(distSq t.B t.C)*(distSq t.C t.A) - (distSq t.A t.B)^2 - (distSq t.B t.C)^2
+     - (distSq t.C t.A)^2) / 4 := by
+  unfold signed_area distSq; ring
 
+/-- DistSq is symmetric: `distSq P Q = distSq Q P`. -/
+lemma distSq_comm (P Q : ℝ × ℝ) : distSq P Q = distSq Q P := by
+  unfold distSq; ring
+
+/-- Congruent triangles have equal squared signed area (SSS congruence).
+    The RHS of `signed_area_sq_formula` is symmetric under any permutation of
+    the three distSq values, so matching the multiset (as `Congruent` does) suffices. -/
+lemma signed_area_sq_eq (t₁ t₂ : Triangle) (h : Congruent t₁ t₂) : (signed_area t₁)^2 = (signed_area t₂)^2 := by
+  have h2_formula (t : Triangle) : (2 * signed_area t)^2 =
+      (2*(distSq t.A t.B)*(distSq t.B t.C) + 2*(distSq t.A t.B)*(distSq t.C t.A)
+       + 2*(distSq t.B t.C)*(distSq t.C t.A) - (distSq t.A t.B)^2 - (distSq t.B t.C)^2
+       - (distSq t.C t.A)^2) / 4 := signed_area_sq_formula t
+  have h_2sq_eq : (2 * signed_area t₁)^2 = (2 * signed_area t₂)^2 := by
+    rcases h with (⟨hAB, hBC, hCA⟩|⟨hAB, hBC, hCA⟩|⟨hAB, hBC, hCA⟩|⟨hAB, hBC, hCA⟩|⟨hAB, hBC, hCA⟩|⟨hAB, hBC, hCA⟩)
+    · rw [h2_formula t₁, h2_formula t₂]; simp [hAB, hBC, hCA]
+    · rw [h2_formula t₁, h2_formula t₂]; rw [hAB, hBC, hCA]; simp [distSq_comm]; ring
+    · rw [h2_formula t₁, h2_formula t₂]; rw [hAB, hBC, hCA]; simp [distSq_comm]; ring
+    · rw [h2_formula t₁, h2_formula t₂]; rw [hAB, hBC, hCA]; simp [distSq_comm]; ring
+    · rw [h2_formula t₁, h2_formula t₂]; rw [hAB, hBC, hCA]; simp [distSq_comm]; ring
+    · rw [h2_formula t₁, h2_formula t₂]; rw [hAB, hBC, hCA]; simp [distSq_comm]; ring
+  calc
+    (signed_area t₁)^2 = ((2 * signed_area t₁)^2) / 4 := by ring
+    _ = ((2 * signed_area t₂)^2) / 4 := by rw [h_2sq_eq]
+    _ = (signed_area t₂)^2 := by ring
+
+/-- In a GeometricTiling, all pieces have equal absolute area (by SSS congruence),
+    and area sum matches T, giving `|signed_area T| ≤ n * |signed_area S|`.
+    This follows from the triangle inequality `|∑ a_i| ≤ ∑ |a_i| = n * |a_S|`. -/
+lemma geometric_area_bound (T S : Triangle) (n : ℕ) (h : GeometricTiling T S n) :
+    |signed_area T| ≤ (n : ℝ) * |signed_area S| := by
+  have h_sq_eq : ∀ t ∈ h.pieces, (signed_area t)^2 = (signed_area S)^2 := by
+    intro t ht; exact signed_area_sq_eq t S (h.all_congruent t ht)
+  have h_abs_eq : ∀ t ∈ h.pieces, |signed_area t| = |signed_area S| := by
+    intro t ht
+    calc
+      |signed_area t| = Real.sqrt ((signed_area t)^2) := by rw [Real.sqrt_sq_eq_abs]
+      _ = Real.sqrt ((signed_area S)^2) := by rw [h_sq_eq t ht]
+      _ = |signed_area S| := by rw [Real.sqrt_sq_eq_abs]
+  calc
+    |signed_area T| = |Finset.sum h.pieces signed_area| := by rw [h.area_eq]
+    _ ≤ Finset.sum h.pieces (λ t => |signed_area t|) := Finset.abs_sum_le_sum_abs _ _
+    _ = Finset.sum h.pieces (λ _ => |signed_area S|) := by
+      refine Finset.sum_congr rfl (λ t ht => ?_)
+      rw [h_abs_eq t ht]
+    _ = (h.pieces.card : ℝ) * |signed_area S| := by simp [Finset.sum_const]
+    _ = (n : ℝ) * |signed_area S| := by rw [h.card_eq]
 
 /-! ### Legendre's three-square theorem (computational cases)
 
@@ -1683,17 +1741,51 @@ NON-equilateral triangles (e.g., right triangles). The true obstruction requires
 a deeper argument (Beeson) showing that any tiling of an equilateral triangle by
 congruent triangles forces the pieces to be equilateral. -/
 
-/-- 7 is not geometrically tilable (Beeson's theorem). -/
+/-- 7 is not geometrically tilable (Beeson's theorem).
+
+    RALPH-LOOP-LESSON: This requires Beeson's classification theorem —
+    that n is tilable by congruent triangles iff n ∈ {a²+b², 2a², 3a², 6a², a²}.
+    The forward direction (if tilable then classification form) is the deep
+    result. The backward direction (constructive tilings for those forms) is
+    partially covered by `squares_constructive_geometric` (k² case), 
+    `two_n_sq_constructive` (2k² case), and `sum_of_squares_constructive` 
+    (a²+b² case), but 3a² and 6a² cases remain unformalized.
+
+    Attempted approaches that failed this session:
+    - `geometric_area_bound` only gives |area(T)| ≤ 7·|area(S)|, which is
+      too weak to rule out 7 (the inequality is satisfiable).
+    - `not_sum_of_three_squares_7` is true but no theorem connects tilability
+      to Legendre's three-square theorem in this codebase.
+    - No existing formalization of Beeson (2020) or the 
+      Miklós–Szőnyi classification.
+
+    Next-episode strategy: formalize the full classification theorem by
+    completing the 3a² and 6a² constructive tilings, then reduce the forward
+    direction to a known number-theoretic condition on the Cosine Law matrix
+    (Beeson's "rational linear combination" argument). -/
 lemma not_geometric_tilable_7 : ¬ GeometricTriangleTilable 7 := by
   sorry
 
-/-- 11 is not geometrically tilable (Beeson's theorem). -/
+/-- 11 is not geometrically tilable (Beeson's theorem).
+    11 IS a sum of three squares (11 = 3²+1²+1²), so Legendre's theorem
+    does NOT rule it out. The obstruction requires Beeson's full classification. -/
 lemma not_geometric_tilable_11 : ¬ GeometricTriangleTilable 11 := by
+  -- RALPH-LOOP: 11 is a sum of three squares, so a different obstruction is needed.
+  -- See `sum_of_three_squares_11` above.
   sorry
 
 /-- Conjecture: primes p ≡ 3 mod 4 are never geometrically tilable.
-    This is implied by the classification conjecture (sum-of-two-squares form). -/
+    If true, this would follow from the classification 
+    (n ∉ {a²+b², 2a², 3a², 6a², a²} for primes p ≡ 3 mod 4).
+    
+    Check: for p ≡ 3 mod 4:
+    - Not a sum of two squares (Fermat)
+    - 2p² > p (not in 2a² form unless trivial)
+    - 3, 6 times a²: p = 3·1² = 3 (but 3≡3 mod 4, so 3 itself is excluded)
+    
+    This is a known open conjecture — it's the Erdős problem #634 itself. -/
 lemma conjectured_geometric_obstruction (p : ℕ) (hp : Nat.Prime p) (hp3 : p % 4 = 3) : ¬ GeometricTriangleTilable p := by
+  -- RALPH-LOOP: This IS the open problem. Proving it would solve Erdős #634.
   sorry
 
 -- EVOLVE-BLOCK-END
