@@ -15,4 +15,6 @@ lean_lib Erdos634 where
   srcDir := "Erdos634"
 lean_lib ErdosLib where
   srcDir := "ErdosLib"
+lean_lib Erdos364 where
+  srcDir := "Erdos364"
 

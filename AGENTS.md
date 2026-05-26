@@ -115,5 +115,5 @@ Population members are self-contained and typically ignore ErdosLib.
 |---------|-----|---------|------|----------|--------|
 | #1 — sum-distinct sets | `Erdos1/` | 5 | 1 | `member_05_champion.lean` | Proof complete (0 sorries) |
 | #25 — congruence-avoiding sets | `Erdos25-evolve/` | 12 | 5 | `member_04_gen1_head_truncation.lean` | 10 sorries (1 mathematically open) |
-| #364 — consecutive powerful numbers | `Erdos364/` | 1 | 1 | `member_01_gen1_even_case.lean` | 0 errors, 1 sorry (even n case closed; odd n open) |
+| #364 — consecutive powerful numbers | `Erdos364/` | 2 | 2 | `member_02_gen2_modular_analysis.lean` | 0 errors, 1 sorry (even n closed; odd n split into 3 residue families mod 9) |
 | #634 — triangle tilings | `Erdos634/` | 9 | 9 | `member_09_gen9_n_two_bisection.lean` | 0 errors, 3 sorries (member_09 adds n=2 bisection + Congruent 6-permutation; 3 obstruction sorries remain under `GeometricTriangleTilable`) |
