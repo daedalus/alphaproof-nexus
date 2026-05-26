@@ -45,8 +45,8 @@ lemma even_rep_with_power_implies_two (n e : ℕ) (p : ℕ) (hn_even : 2 ∣ n) 
   have hsum : 2 ∣ p + 2^e := by
     rw [h_eq]
     exact hn_even
-  have hp_even : 2 ∣ p :=
-    (Nat.dvd_add_iff_right h2e_even).mpr hsum
+  have hsum' : 2 ∣ 2^e + p := by simpa [add_comm] using hsum
+  have hp_even : 2 ∣ p := (Nat.dvd_add_iff_right h2e_even).mpr hsum'
   have h2_prime : Nat.Prime 2 := by norm_num
   rcases hp_prime.eq_one_or_self_of_dvd 2 hp_even with (h | h)
   · linarith
@@ -105,8 +105,8 @@ lemma infinitely_many_counterexamples_k1 : ∃ (A : Set ℕ), Set.Infinite A ∧
   have hA_inf : Set.Infinite A := by
     have h_inj : Function.Injective (λ (t : ℕ) => 28 + 36*t) := by
       intro x y h
-      have : 36*x = 36*y := by omega
-      exact mul_left_cancel₀ (by norm_num : 36 ≠ 0) this
+      have h' : 28 + 36*x = 28 + 36*y := h
+      omega
     have h_range_subset : Set.range (λ (t : ℕ) => 28 + 36*t) ⊆ A := by
       rintro n ⟨t, rfl⟩; exact ⟨t, rfl⟩
     have h_range_infinite : Set.Infinite (Set.range (λ (t : ℕ) => 28 + 36*t)) :=
@@ -176,7 +176,8 @@ theorem conjecture_false_for_k1 : ¬ Filter.Eventually (RepresentableWith · 1) 
       have h_sub : A ⊆ (Finset.range (M+1) : Set ℕ) := by
         intro n hn
         have hn_le_M : n ≤ M := h_all n hn
-        simp [Finset.mem_range, hn_le_M]
+        have : n < M+1 := by omega
+        simpa
       exact Set.Finite.subset (Finset.finite_toSet _) h_sub
     exact hA_inf h_bdd
   rcases h_exists_gt with ⟨n, hnA, hn_gt⟩
