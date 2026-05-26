@@ -1,51 +1,29 @@
-# AlphaProof Nexus — Erdős Problem #25
+# AlphaProof Nexus
 
-**Does every congruence-avoiding set have a logarithmic density?**
-[erdosproblems.com/25](https://www.erdosproblems.com/25) — Open, $0 prize.
+Repository of Lean 4 formalizations for open Erdős problems, evolved via
+AlphaProof Nexus (arXiv:2605.22763) evolutionary proof search.
 
-This repo applies the [AlphaProof Nexus](https://arxiv.org/abs/2605.22763) evolutionary
-methodology to decompose and attack the problem in Lean 4, using the
-[alphaproof-nexus skill](https://github.com/daedalus/skills) to guide the
-Ralph loop and EVOLVE-BLOCK/VALUE structure.
+## Problems
 
-## Population (3 generations, 10 members)
+| # | Title | Status | Dir |
+|---|-------|--------|-----|
+| 1 | Sum-distinct sets | Proof complete (0 sorries) | `problems/1/` |
+| 25 | Congruence-avoiding sets | 10 sorries (1 open) | `problems/25/` |
+| 364 | Consecutive powerful numbers | 0 errors, 1 sorry | `problems/364/` |
+| 634 | Triangle tilings | 0 errors, 3 sorries | `problems/634/` |
 
-| Gen | Members | Contribution |
-|-----|---------|--------------|
-| 0 | 5 | Baseline strategies: DE case, Cauchy criterion, counterexample sketch, head-truncation (2 variants), summability |
-| 1 | 2 | **Head-truncation** (keep first k moduli) identified as the correct decomposition; tail-truncation was wrong |
-| 2 | 2 | Hybrid: head-truncation + measure-theoretic bounds |
-| 3 | 1 | Counterexample exploration via Σ 1/n_i divergence |
+All 628 open Erdős problems have directories under `problems/N/`.
 
-## Key Finding
-
-The problem reduces to a single open condition: $\sum_{i > k} 1/n_i \to 0$ as $k \to \infty$.
-Head-truncation shows density exists whenever this tail sum converges.
-The gap is whether a subtler proof handles the divergent case (answer = True)
-or a counterexample with slow-growing $n_i$ exists (answer = False).
-
-## Compile
+## Quick start
 
 ```bash
-lean Erdos25.lean                     # Top-level statement + stubs
-lean Erdos25-evolve/Erdos25.lean      # Self-contained version
-lean population/member_04_gen1_head_truncation.lean  # Champion (10 sorries)
+lean problems/25/Erdos25.lean
+lean problems/25/population/member_04_gen1_head_truncation.lean
+lean problems/634/population/member_07_gen7_geometric_obstruction.lean
+lean problems/1/Erdos1.lean
+lean problems/1/population/member_05_champion.lean
 ```
 
 Requires Lean 4.29.1, `lean` on `PATH`.
 
-## Structure
-
-```
-Erdos25.lean                                          — Problem statement, DE lemma, counterexample
-Erdos25-evolve/
-  Erdos25.lean                                        — Self-contained problem + HasLogDensity
-  population/
-    member_04_gen1_head_truncation.lean               — 🏆 Champion
-    member_01_DE_base.lean ... member_09_gen3_counterexample.lean  — Other members
-```
-
-## Status
-
-All members compile. Champion has 10 `sorry`s: 3 standard (epsilon-delta), 6 structural,
-1 **mathematically open** (tail sum convergence).
+See `AGENTS.md` for full workflow documentation.

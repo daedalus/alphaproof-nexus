@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 792
+
+*Reference:* https://www.erdosproblems.com/792
+
+Let $f(n)$ be maximal such that in any $A\subset \mathbb{Z}$ with $\lvert A\rvert=n$ there exists some sum-free subset $B\subseteq A$ with $\lvert B\rvert \geq f(n)$, so that there are no solutions to\[a+b=c\]with $a,b,c\in B$. Estimate $f(n)$.
+-/
+
+namespace Erdos792
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos792

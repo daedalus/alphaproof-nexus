@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 1112
+
+*Reference:* https://www.erdosproblems.com/1112
+
+Let $1\leq d_1<d_2$ and $k\geq 3$. Does there exist an integer $r$ such that if $B=\{b_1<\cdots\}$ is a lacunary sequence of positive integers with $b_{i+1}\geq rb_i$ then there exists a sequence of positive integers $A=\{a_1<\cdots\}$ such that\[d_1\leq a_{i+1}-a_i\leq d_2\]for all $i\geq 1$ and $(kA)\cap B=\emptyset$, where $kA$ is the $k$-fold sumset?
+-/
+
+namespace Erdos1112
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos1112

@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 856
+
+*Reference:* https://www.erdosproblems.com/856
+
+Let $k\geq 3$ and $f_k(N)$ be the maximum value of $\sum_{n\in A}\frac{1}{n}$, where $A$ ranges over all subsets of $\{1,\ldots,N\}$ which contain no subset of size $k$ with the same pairwise least common multiple.Estimate $f_k(N)$.
+-/
+
+namespace Erdos856
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos856

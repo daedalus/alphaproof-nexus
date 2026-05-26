@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 304
+
+*Reference:* https://www.erdosproblems.com/304
+
+For integers $1\leq a<b$ let $N(a,b)$ denote the minimal $k$ such that there exist integers $1<n_1<\cdots<n_k$ with\[\frac{a}{b}=\frac{1}{n_1}+\cdots+\frac{1}{n_k}.\]Estimate $N(b)=\max_{1\leq a<b}N(a,b)$. Is it true that $N(b) \ll \log\log b$?
+-/
+
+namespace Erdos304
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos304

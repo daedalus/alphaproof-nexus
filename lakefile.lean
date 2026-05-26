@@ -8,13 +8,13 @@ package "alphaproof-nexus" where
 require "leanprover-community" / "mathlib" @ git "master"
 
 lean_lib Erdos1 where
-  srcDir := "Erdos1"
+  srcDir := "problems/1"
 lean_lib Erdos25 where
-  srcDir := "Erdos25-evolve"
+  srcDir := "problems/25"
 lean_lib Erdos634 where
-  srcDir := "Erdos634"
+  srcDir := "problems/634"
 lean_lib ErdosLib where
   srcDir := "ErdosLib"
 lean_lib Erdos364 where
-  srcDir := "Erdos364"
+  srcDir := "problems/364"
 

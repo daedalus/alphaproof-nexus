@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 872
+
+*Reference:* https://www.erdosproblems.com/872
+
+Consider the two-player game in which players alternately choose integers from $\{2,3,\ldots,n\}$ to be included in some set $A$ (the same set for both players) such that no $a\mid b$ for $a\neq b\in A$. The game ends when no legal move is possible. One player wants the game to last as long as possible, the other wants the game to end quickly. How long can the game be guaranteed to last for? At least $\epsilon n$ moves? (For $\epsilon>0$ and $n$ sufficiently large.) At least $(1-\epsilon)\frac{n}{2}$ moves?
+-/
+
+namespace Erdos872
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos872

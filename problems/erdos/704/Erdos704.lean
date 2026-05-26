@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 704
+
+*Reference:* https://www.erdosproblems.com/704
+
+Let $G_n$ be the unit distance graph in $\mathbb{R}^n$, with two vertices joined by an edge if and only if the distance between them is $1$.Estimate the chromatic number $\chi(G_n)$. Does it grow exponentially in $n$? Does\[\lim_{n\to \infty}\chi(G_n)^{1/n}\]exist?
+-/
+
+namespace Erdos704
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos704

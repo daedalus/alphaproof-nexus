@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 85
+
+*Reference:* https://www.erdosproblems.com/85
+
+Let $n\geq 4$ and $f(n)$ be minimal such that every graph on $n$ vertices with minimal degree $\geq f(n)$ contains a $C_4$. Is it true that, for all large $n$, $f(n+1)\geq f(n)$?
+-/
+
+namespace Erdos85
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos85

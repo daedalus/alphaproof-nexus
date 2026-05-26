@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 1066
+
+*Reference:* https://www.erdosproblems.com/1066
+
+Let $G$ be a graph given by $n$ points in $\mathbb{R}^2$, where any two distinct points are at least distance $1$ apart, and we draw an edge between two points if they are distance $1$ apart.Let $g(n)$ be maximal such that any such graph always has an independent set on at least $g(n)$ vertices. Estimate $g(n)$, or perhaps $\lim \frac{g(n)}{n}$.
+-/
+
+namespace Erdos1066
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos1066

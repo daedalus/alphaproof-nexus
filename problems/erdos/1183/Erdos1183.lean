@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 1183
+
+*Reference:* https://www.erdosproblems.com/1183
+
+Let $f(n)$ be maximal such that in any $2$-colouring of the subsets of $\{1,\ldots,n\}$ there is always a monochromatic family of at least $f(n)$ sets which is closed under taking unions and intersections. Estimate $f(n)$.Let $F(n)$ be defined similarly, except that we only require the family be closed under taking unions. Estimate $F(n)$. In particular, is it true that $F(n)\geq n^{\omega(n)}$ for some $\omega(n)\to \infty$ as $n\to \infty$, and $F(n)<(1+o(1))^n$?
+-/
+
+namespace Erdos1183
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos1183

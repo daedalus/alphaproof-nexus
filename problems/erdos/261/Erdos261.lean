@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 261
+
+*Reference:* https://www.erdosproblems.com/261
+
+Are there infinitely many $n$ such that there exists some $t\geq 2$ and distinct integers $a_1,\ldots,a_t\geq 1$ such that\[\frac{n}{2^n}=\sum_{1\leq k\leq t}\frac{a_k}{2^{a_k}}?\]Is this true for all $n$? Is there a rational $x$ such that\[x = \sum_{k=1}^\infty \frac{a_k}{2^{a_k}}\]has at least $2^{\aleph_0}$ solutions?
+-/
+
+namespace Erdos261
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos261

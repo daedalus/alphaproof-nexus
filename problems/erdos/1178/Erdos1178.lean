@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 1178
+
+*Reference:* https://www.erdosproblems.com/1178
+
+For $r\geq 3$ let $d_r(e)$ be the minimal $d$ such that\[\mathrm{ex}_r(n,\mathcal{F})=o(n^2),\]where $\mathcal{F}$ is the family of $r$-uniform hypergraphs on $d$ vertices with $e$ edges.Prove that\[d_r(e)=(r-2)e+3\]for all $r,e\geq 3$.
+-/
+
+namespace Erdos1178
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos1178

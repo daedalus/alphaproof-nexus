@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 693
+
+*Reference:* https://www.erdosproblems.com/693
+
+Let $k\geq 2$ and $n$ be sufficiently large depending on $k$. Let $A=\{a_1<a_2<\cdots \}$ be the set of those integers in $[n,n^k]$ which have a divisor in $(n,2n)$. Estimate\[\max_{i} a_{i+1}-a_i.\]Is this $\leq (\log n)^{O(1)}$?
+-/
+
+namespace Erdos693
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos693

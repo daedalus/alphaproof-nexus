@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 805
+
+*Reference:* https://www.erdosproblems.com/805
+
+For which functions $g(n)$ with $n>g(n)\geq (\log n)^2$ is there a graph on $n$ vertices in which every induced subgraph on $g(n)$ vertices contains a clique of size $\geq \log n$ and an independent set of size $\geq \log n$?In particular, is there such a graph for $g(n)=(\log n)^3$?
+-/
+
+namespace Erdos805
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos805

@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 1016
+
+*Reference:* https://www.erdosproblems.com/1016
+
+Let $h(n)$ be minimal such that there is a graph on $n$ vertices with $n+h(n)$ edges which contains a cycle on $k$ vertices, for all $3\leq k\leq n$. Estimate $h(n)$. In particular, is it true that\[h(n) \geq \log_2n+\log_*n-O(1),\]where $\log_*n$ is the iterated logarithmic function?
+-/
+
+namespace Erdos1016
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos1016

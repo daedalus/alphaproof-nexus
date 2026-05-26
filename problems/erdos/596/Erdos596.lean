@@ -1,0 +1,21 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 596
+
+*Reference:* https://www.erdosproblems.com/596
+
+For which graphs $G_1,G_2$ is it true that
+ for every $n\geq 1$ there is a graph $H$ without a $G_1$ but if the edges of $H$ are $n$-coloured then there is a monochromatic copy of $G_2$, and yet
+ for every graph $H$ without a $G_1$ there is an $\aleph_0$-colouring of the edges of $H$ without a monochromatic $G_2$.
+-/
+
+namespace Erdos596
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos596

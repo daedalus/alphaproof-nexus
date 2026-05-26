@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 263
+
+*Reference:* https://www.erdosproblems.com/263
+
+Let $a_n$ be an increasing sequence of positive integers such that for every sequence of positive integers $b_n$ with $b_n/a_n\to 1$ the sum\[\sum\frac{1}{b_n}\]is irrational. Is $a_n=2^{2^n}$ such a sequence? Must such a sequence satisfy $a_n^{1/n}\to \infty$?
+-/
+
+namespace Erdos263
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos263

@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 151
+
+*Reference:* https://www.erdosproblems.com/151
+
+For a graph $G$ let $\tau(G)$ denote the minimal number of vertices that include at least one from each maximal clique of $G$ on at least two vertices (sometimes called the clique transversal number).Let $H(n)$ be maximal such that every triangle-free graph on $n$ vertices contains an independent set on $H(n)$ vertices.If $G$ is a graph on $n$ vertices then is\[\tau(G)\leq n-H(n)?\]
+-/
+
+namespace Erdos151
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos151

@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 1132
+
+*Reference:* https://www.erdosproblems.com/1132
+
+For $x_1,\ldots,x_n\in [-1,1]$ let\[l_k(x)=\frac{\prod_{i\neq k}(x-x_i)}{\prod_{i\neq k}(x_k-x_i)},\]which are such that $l_k(x_k)=1$ and $l_k(x_i)=0$ for $i\neq k$.Let $x_1,x_2,\ldots\in [-1,1]$ be an infinite sequence, and let\[L_n(x) = \sum_{1\leq k\leq n}\lvert l_k(x)\rvert,\]where each $l_k(x)$ is defined above with respect to $x_1,\ldots,x_n$.Must there exist $x\in (-1,1)$ such that\[L_n(x) >\frac{2}{\pi}\log n-O(1)\]for infinitely many $n$?Is it true that\[\limsup_{n\to \infty}\frac{L_n(x)}{\log n}\geq \frac{2}{\pi}\]for almost all $x\in (-1,1)$?
+-/
+
+namespace Erdos1132
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos1132

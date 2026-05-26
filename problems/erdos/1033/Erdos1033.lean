@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 1033
+
+*Reference:* https://www.erdosproblems.com/1033
+
+Let $h(n)$ be such that every graph on $n$ vertices with $>n^2/4$ many edges contains a triangle whose vertices have degrees summing to at least $h(n)$. Estimate $h(n)$. In particular, is it true that\[h(n)\geq (2(\sqrt{3}-1)-o(1))n?\]
+-/
+
+namespace Erdos1033
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos1033

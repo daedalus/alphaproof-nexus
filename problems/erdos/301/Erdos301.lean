@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 301
+
+*Reference:* https://www.erdosproblems.com/301
+
+Let $f(N)$ be the size of the largest $A\subseteq \{1,\ldots,N\}$ such that there are no solutions to\[\frac{1}{a}= \frac{1}{b_1}+\cdots+\frac{1}{b_k}\]with distinct $a,b_1,\ldots,b_k\in A$?Estimate $f(N)$. In particular, is it true that $f(N)=(\tfrac{1}{2}+o(1))N$?
+-/
+
+namespace Erdos301
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos301

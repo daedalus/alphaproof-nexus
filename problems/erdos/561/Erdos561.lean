@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 561
+
+*Reference:* https://www.erdosproblems.com/561
+
+Let $\hat{R}(G)$ denote the size Ramsey number, the minimal number of edges $m$ such that there is a graph $H$ with $m$ edges such that in any $2$-colouring of the edges of $H$ there is a monochromatic copy of $G$. Let $F_1$ and $F_2$ be the union of stars. More precisely, let $F_1=\cup_{i\leq s} K_{1,n_i}$ and $F_2=\cup_{j\leq t} K_{1,m_j}$ with $n_1\geq \cdots \geq n_s\geq 1$ and $m_1\geq \cdots \geq m_t\geq 1$. Prove that\[\hat{R}(F_1,F_2) = \sum_{2\leq k\leq s+t}l_k\]where\[l_k=\max\{n_i+m_j-1 : i+j=k\}.\]
+-/
+
+namespace Erdos561
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos561

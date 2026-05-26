@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 340
+
+*Reference:* https://www.erdosproblems.com/340
+
+Let $A=\{1,2,4,8,13,21,31,45,66,81,97,\ldots\}$ be the greedy Sidon sequence: we begin with $1$ and iteratively include the next smallest integer that preserves the Sidon property (i.e. there are no non-trivial solutions to $a+b=c+d$). What is the order of growth of $A$? Is it true that\[\lvert A\cap \{1,\ldots,N\}\rvert \gg N^{1/2-\epsilon}\]for all $\epsilon>0$ and large $N$?
+-/
+
+namespace Erdos340
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos340

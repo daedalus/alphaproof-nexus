@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 809
+
+*Reference:* https://www.erdosproblems.com/809
+
+Define the anti-Ramsey number $\chi_S(n,e,G)$ as the smallest $r$ such that there is a graph with $n$ vertices and $e$ edges with an $r$-colouring of its edges in which every copy of $G$ has entirely distinct edge colours.Is it true that, for all $k\geq 3$,\[\chi_S(n, \lfloor n^2/4\rfloor+1,C_{2k+1})\sim n^2/8?\]
+-/
+
+namespace Erdos809
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos809

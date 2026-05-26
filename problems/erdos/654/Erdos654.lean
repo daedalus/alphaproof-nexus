@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 654
+
+*Reference:* https://www.erdosproblems.com/654
+
+Let $f(n)$ be such that, given any $x_1,\ldots,x_n\in \mathbb{R}^2$ with no four points on a circle, there exists some $x_i$ with at least $f(n)$ many distinct distances to other $x_j$. Estimate $f(n)$ - in particular, is it true that\[f(n)>(1-o(1))n?\]Or at least\[f(n) > (1/3+c)n\]for some $c>0$, for all large $n$?
+-/
+
+namespace Erdos654
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos654

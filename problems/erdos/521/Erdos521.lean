@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 521
+
+*Reference:* https://www.erdosproblems.com/521
+
+Let $(\epsilon_k)_{k\geq 0}$ be independently uniformly chosen at random from $\{-1,1\}$. If $R_n$ counts the number of real roots of $f_n(z)=\sum_{0\leq k\leq n}\epsilon_k z^k$ then is it true that, almost surely,\[\lim_{n\to \infty}\frac{R_n}{\log n}=\frac{2}{\pi}?\]
+-/
+
+namespace Erdos521
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos521

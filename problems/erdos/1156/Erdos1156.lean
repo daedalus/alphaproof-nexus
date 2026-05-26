@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 1156
+
+*Reference:* https://www.erdosproblems.com/1156
+
+Let $G$ be a random graph on $n$ vertices, in which every edge is included independently with probability $1/2$. Is there some constant $C$ such that that chromatic number $\chi(G)$ is, almost surely, concentrated on at most $C$ values? Is it true that, if $\omega(n)\to \infty$ sufficiently slowly, then for every function $f(n)$\[\mathbb{P}(\lvert\chi(G)-f(n)\rvert<\omega(n))<1/2\]if $n$ is sufficiently large?
+-/
+
+namespace Erdos1156
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos1156

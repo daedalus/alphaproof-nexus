@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 354
+
+*Reference:* https://www.erdosproblems.com/354
+
+Let $\alpha,\beta\in \mathbb{R}_{>0}$ such that $\alpha/\beta$ is irrational. Is the multiset\[\{ \lfloor \alpha\rfloor,\lfloor 2\alpha\rfloor,\lfloor 4\alpha\rfloor,\ldots\}\cup \{ \lfloor \beta\rfloor,\lfloor 2\beta\rfloor,\lfloor 4\beta\rfloor,\ldots\}\]complete? That is, can all sufficiently large natural numbers $n$ be written as\[n=\sum_{s\in S}\lfloor 2^s\alpha\rfloor+\sum_{t\in T}\lfloor 2^t\beta\rfloor\]for some finite $S,T\subset \mathbb{N}$?What if $2$ is replaced by some $\gamma\in(1,2)$?
+-/
+
+namespace Erdos354
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos354

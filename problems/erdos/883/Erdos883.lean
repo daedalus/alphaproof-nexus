@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 883
+
+*Reference:* https://www.erdosproblems.com/883
+
+For $A\subseteq \{1,\ldots,n\}$ let $G(A)$ be the graph with vertex set $A$, where two integers are joined by an edge if they are coprime.Is it true that if\[\lvert A\rvert >\lfloor\tfrac{n}{2}\rfloor+\lfloor\tfrac{n}{3}\rfloor-\lfloor\tfrac{n}{6}\rfloor\]then $G(A)$ contains all odd cycles of length $\leq \frac{n}{3}+1$?Is it true that, for every $\ell\geq 1$, if $n$ is sufficiently large and\[\lvert A\rvert >\lfloor\tfrac{n}{2}\rfloor+\lfloor\tfrac{n}{3}\rfloor-\lfloor\tfrac{n}{6}\rfloor\]then $G(A)$ must contain a complete $(1,\ell,\ell)$ triparite graph on $2\ell+1$ vertices?
+-/
+
+namespace Erdos883
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos883

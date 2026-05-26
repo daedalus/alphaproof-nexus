@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 415
+
+*Reference:* https://www.erdosproblems.com/415
+
+For any $n$ let $F(n)$ be the largest $k$ such that any of the $k!$ possible ordering patterns appears in some sequence of $\phi(m+1),\ldots,\phi(m+k)$ with $m+k\leq n$. Is it true that\[F(n)=(c+o(1))\log\log\log n\]for some constant $c$? Is the first pattern which fails to appear always\[\phi(m+1)>\phi(m+2)>\cdots >\phi(m+k)?\]Is it true that the 'natural' ordering which mimics what happens to $\phi(1),\ldots,\phi(k)$ is the most likely to appear?
+-/
+
+namespace Erdos415
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos415

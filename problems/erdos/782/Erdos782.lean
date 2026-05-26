@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 782
+
+*Reference:* https://www.erdosproblems.com/782
+
+Do the squares contain arbitrarily long quasi-progressions? That is, does there exist some constant $C>0$ such that, for any $k$, the squares contain a sequence $x_1,\ldots,x_k$ where, for some $d$ and all $1\leq i<k$,\[x_i+d\leq x_{i+1}\leq x_i+d+C.\]Do the squares contain arbitrarily large cubes\[a+\left\{ \sum_i \epsilon_ib_i : \epsilon_i\in \{0,1\}\right\}?\]
+-/
+
+namespace Erdos782
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos782

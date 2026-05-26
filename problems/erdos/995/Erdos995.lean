@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 995
+
+*Reference:* https://www.erdosproblems.com/995
+
+Let $n_1<n_2<\cdots$ be a lacunary sequence of integers and $f\in L^2([0,1])$. Estimate the growth of, for almost all $\alpha$,\[\sum_{1\leq k\leq N}f(\{ \alpha n_k\}).\]For example, is it true that, for almost all $\alpha$,\[\sum_{1\leq k\leq N}f(\{ \alpha n_k\})=o(N\sqrt{\log\log N})?\]
+-/
+
+namespace Erdos995
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos995

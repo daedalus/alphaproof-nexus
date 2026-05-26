@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 853
+
+*Reference:* https://www.erdosproblems.com/853
+
+Let $d_n=p_{n+1}-p_n$, where $p_n$ is the $n$th prime. Let $r(x)$ be the smallest even integer $t$ such that $d_n=t$ has no solutions for $n\leq x$.Is it true that $r(x)\to \infty$? Or even $r(x)/\log x \to \infty$?
+-/
+
+namespace Erdos853
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos853

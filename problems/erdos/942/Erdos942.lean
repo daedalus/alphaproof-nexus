@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 942
+
+*Reference:* https://www.erdosproblems.com/942
+
+Let $h(n)$ count the number of powerful (if $p\mid m$ then $p^2\mid m$) integers in $[n^2,(n+1)^2)$. Estimate $h(n)$. In particular is there some constant $c>0$ such that\[h(n) (\log n)^{c-o(1)}?\]
+-/
+
+namespace Erdos942
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos942

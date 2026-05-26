@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 336
+
+*Reference:* https://www.erdosproblems.com/336
+
+For $r\geq 2$ let $h(r)$ be the maximal finite $k$ such that there exists a basis $A\subseteq \mathbb{N}$ of order $r$ (so every large integer is the sum of at most $r$ integers from $A$) and exact order $k$ (so every large integer is the sum of exactly $k$ integers from $A$). Find the value of\[\lim_r \frac{h(r)}{r^2}.\]
+-/
+
+namespace Erdos336
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos336

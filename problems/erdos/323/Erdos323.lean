@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 323
+
+*Reference:* https://www.erdosproblems.com/323
+
+Let $1\leq m\leq k$ and $f_{k,m}(x)$ denote the number of integers $\leq x$ which are the sum of $m$ many nonnegative $k$th powers. Is it true that\[f_{k,k}(x) \gg_\epsilon x^{1-\epsilon}\]for all $\epsilon>0$? Is it true that if $m<k$ then\[f_{k,m}(x) \gg x^{m/k}\]for sufficiently large $x$?
+-/
+
+namespace Erdos323
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos323

@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 774
+
+*Reference:* https://www.erdosproblems.com/774
+
+We call $A\subset \mathbb{N}$ dissociated if $\sum_{n\in X}n\neq \sum_{m\in Y}m$ for all finite $X,Y\subset A$ with $X\neq Y$. Let $A\subset \mathbb{N}$ be an infinite set. We call $A$ proportionately dissociated if every finite $B\subset A$ contains a dissociated set of size $\gg \lvert B\rvert$.Is every proportionately dissociated set the union of a finite number of dissociated sets?
+-/
+
+namespace Erdos774
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos774

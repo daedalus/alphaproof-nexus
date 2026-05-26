@@ -3,23 +3,23 @@
 Repository of Lean 4 formalizations for open Erdős problems, evolved via
 AlphaProof Nexus (arXiv:2605.22763) evolutionary proof search.
 
-Each problem lives in its own directory with a population of proof attempts
+Each problem lives under `problems/N/` with a population of proof attempts
 rated by "sorry" count and mathematical insight.
 
 ## Quick start
 
 ```bash
 # Erdos #25 — congruence-avoiding sets
-lean Erdos25-evolve/Erdos25.lean
-lean Erdos25-evolve/population/member_04_gen1_head_truncation.lean
+lean problems/25/Erdos25.lean
+lean problems/25/population/member_04_gen1_head_truncation.lean
 
 # Erdos #634 — triangle tilings
-lean Erdos634/Erdos634.lean
-lean Erdos634/population/member_07_gen7_geometric_obstruction.lean
+lean problems/634/Erdos634.lean
+lean problems/634/population/member_07_gen7_geometric_obstruction.lean
 
 # Erdos #1 — sum-distinct sets
-lean Erdos1/Erdos1.lean
-lean Erdos1/population/member_05_champion.lean
+lean problems/1/Erdos1.lean
+lean problems/1/population/member_05_champion.lean
 ```
 
 Requires Lean 4.29.1, `lean` on `PATH`.
@@ -27,21 +27,30 @@ Requires Lean 4.29.1, `lean` on `PATH`.
 ## File structure
 
 ```
-Erdos1/                                   — Problem directory for Erdős #1
-  Erdos1.lean                             — Problem statement + @[research_open] stub
-  population/member_{NN}_{desc}.lean      — Proof attempts
-Erdos25-evolve/                           — Problem directory for Erdős #25
-  Erdos25.lean                            — Self-contained problem + HasLogDensity
-  population/member_{NN}_{desc}.lean      — Proof attempts (may have gen{G} tags)
-ErdosLib/                                 — Shared library (namespace ErdosLib)
-  proven/                                 — Fully proven lemmas (0 sorries)
+problems/                                   — All problem directories
+  1/                                        — Erdős #1
+    Erdos1.lean                             — Problem statement + @[research_open] stub
+    population/member_{NN}_{desc}.lean      — Proof attempts
+  25/                                       — Erdős #25
+    Erdos25.lean                            — Self-contained problem + HasLogDensity
+    Erdos25_formal_conjectures.lean         — Variant with FormalConjectures dep
+    population/member_{NN}_{desc}.lean      — Proof attempts (may have gen{G} tags)
+  364/                                      — Erdős #364
+    Erdos364.lean
+    population/
+  634/                                      — Erdős #634
+    Erdos634.lean
+    population/
+  ...                                       — Empty dirs for other open problems
+ErdosLib/                                   — Shared library (namespace ErdosLib)
+  proven/                                   — Fully proven lemmas (0 sorries)
     Problem.lean, SumDistinct.lean
-  unproven/                               — Lemmas with open sorries
+  unproven/                                 — Lemmas with open sorries
     Density.lean, Periodic.lean, Truncation.lean, Summability.lean
-Erdos25.lean                              — Top-level Erdos #25 (external FormalConjectures dep)
+scripts/                                    — Utility scripts
 ```
 
-Each new problem gets its own `Erdos{N}/` directory with the same structure.
+Each new problem gets its own `problems/N/` directory with the same structure.
 
 ## Problem conventions
 
@@ -65,7 +74,7 @@ Files are self-contained (import `Mathlib` only, no external deps).
 
 ## How to add a new problem
 
-1. Create `Erdos{N}/Erdos{N}.lean` with the problem statement.
+1. Create `problems/N/Erdos{N}.lean` with the problem statement.
 2. Define namespace, types, the main `@[research_open]` theorem, and EVOLVE-BLOCK markers.
 3. Add a `population/` subdirectory.
 4. Add an entry to `ErdosLib/Problem.lean` if reusable types apply.
@@ -113,7 +122,7 @@ Population members are self-contained and typically ignore ErdosLib.
 
 | Problem | Dir | Members | Gens | Champion | Status |
 |---------|-----|---------|------|----------|--------|
-| #1 — sum-distinct sets | `Erdos1/` | 5 | 1 | `member_05_champion.lean` | Proof complete (0 sorries) |
-| #25 — congruence-avoiding sets | `Erdos25-evolve/` | 12 | 5 | `member_04_gen1_head_truncation.lean` | 10 sorries (1 mathematically open) |
-| #364 — consecutive powerful numbers | `Erdos364/` | 3 | 3 | `member_03_gen3_modular_framework.lean` | 0 errors, 1 sorry (even n closed; odd n: 9 admissible CRT classes mod 900, all non‑empty) |
-| #634 — triangle tilings | `Erdos634/` | 9 | 9 | `member_09_gen9_n_two_bisection.lean` | 0 errors, 3 sorries (member_09 adds n=2 bisection + Congruent 6-permutation; 3 obstruction sorries remain under `GeometricTriangleTilable`) |
+| #1 — sum-distinct sets | `problems/1/` | 5 | 1 | `member_05_champion.lean` | 0 errors, 7 sorries across files |
+| #25 — congruence-avoiding sets | `problems/25/` | 12 | 5 | `member_04_gen1_head_truncation.lean` | 10 sorries (1 mathematically open) |
+| #364 — consecutive powerful numbers | `problems/364/` | 3 | 3 | `member_03_gen3_modular_framework.lean` | 0 errors, 1 sorry (even n closed; odd n: 9 admissible CRT classes mod 900, all non‑empty) |
+| #634 — triangle tilings | `problems/634/` | 9 | 9 | `member_09_gen9_n_two_bisection.lean` | 0 errors, 3 sorries (member_09 adds n=2 bisection + Congruent 6-permutation; 3 obstruction sorries remain under `GeometricTriangleTilable`) |

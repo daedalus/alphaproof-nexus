@@ -1,0 +1,19 @@
+import Mathlib
+
+open Set Finset
+open scoped BigOperators
+
+/-!
+# Erdős Problem 288
+
+*Reference:* https://www.erdosproblems.com/288
+
+Is it true that there are only finitely many pairs of intervals $I_1,I_2$ such that\[\sum_{n_1\in I_1}\frac{1}{n_1}+\sum_{n_2\in I_2}\frac{1}{n_2}\in \mathbb{N}?\]
+-/
+
+namespace Erdos288
+
+-- EVOLVE-BLOCK-START
+-- EVOLVE-BLOCK-END
+
+end Erdos288
