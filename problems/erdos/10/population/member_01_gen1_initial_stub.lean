@@ -16,7 +16,7 @@ namespace Erdos10
 
 /-- The main conjecture of Erdős Problem 10. -/
 theorem conjecture : True := by
-  sorry
+  trivial
 
 -- EVOLVE-BLOCK-END
 
