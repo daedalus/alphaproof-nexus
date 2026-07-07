@@ -20,6 +20,10 @@ lean problems/634/population/member_07_gen7_geometric_obstruction.lean
 # Erdos #1 — sum-distinct sets
 lean problems/1/Erdos1.lean
 lean problems/1/population/member_05_champion.lean
+
+# FACT0RN — integer factorization as PoW
+lean problems/fact0rn/Fact0rn.lean
+lean problems/fact0rn/population/member_02_reward_function.lean
 ```
 
 Requires Lean 4.29.1, `lean` on `PATH`.
@@ -41,6 +45,9 @@ problems/                                   — All problem directories
   634/                                      — Erdős #634
     Erdos634.lean
     population/
+  fact0rn/                                  — FACT0RN (integer factorization PoW)
+    Fact0rn.lean                            — Core definitions + theorems
+    population/member_{NN}_{desc}.lean      — Proof attempts
   ...                                       — Empty dirs for other open problems
 ErdosLib/                                   — Shared library (namespace ErdosLib)
   proven/                                   — Fully proven lemmas (0 sorries)
@@ -126,3 +133,4 @@ Population members are self-contained and typically ignore ErdosLib.
 | #25 — congruence-avoiding sets | `problems/25/` | 12 | 5 | `member_04_gen1_head_truncation.lean` | 10 sorries (1 mathematically open) |
 | #364 — consecutive powerful numbers | `problems/364/` | 3 | 3 | `member_03_gen3_modular_framework.lean` | 0 errors, 1 sorry (even n closed; odd n: 9 admissible CRT classes mod 900, all non‑empty) |
 | #634 — triangle tilings | `problems/634/` | 9 | 9 | `member_09_gen9_n_two_bisection.lean` | 0 errors, 3 sorries (member_09 adds n=2 bisection + Congruent 6-permutation; 3 obstruction sorries remain under `GeometricTriangleTilable`) |
+| FACT0RN — integer factorization PoW | `problems/fact0rn/` | 2 | 2 | `member_02_reward_function.lean` | 0 errors, 1 sorry (reward_doubling needs Nat division infra); 3 whitepaper errors discovered |

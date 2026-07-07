@@ -17,4 +17,8 @@ lean_lib ErdosLib where
   srcDir := "ErdosLib"
 lean_lib Erdos364 where
   srcDir := "problems/364"
+lean_lib RiemannHypothesis where
+  srcDir := "problems/millennium/riemann"
+lean_lib Fact0rn where
+  srcDir := "problems/fact0rn"
 
