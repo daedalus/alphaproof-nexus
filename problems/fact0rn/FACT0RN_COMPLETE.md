@@ -585,17 +585,7 @@ have hb : 11178600 * 2 ^ e >= 11178600 := by
 problems/fact0rn/
 ├── FACT0RN_COMPLETE.md          # This file (merged documentation)
 ├── Fact0rn.lean                 # Main formalization (0 sorries, 0 warnings)
-├── README.md                    # Project overview
-├── ANALYSIS.md                  # Detailed mathematical analysis
-├── ATTACK_ANALYSIS.md           # Attack vector analysis
-├── FERMAT_REFORMULATION.md      # Fermat parameterization analysis
-├── FERMAT_INSIGHT.md            # User's Fermat insight documentation
-├── EVOLUTION_SUMMARY.md         # Evolutionary search results
-├── EVOLUTION_LOG.md             # Execution log
-├── FINAL_REPORT.md              # Final report
-├── FINAL_STATUS.md              # Status document
-├── FINAL_SUMMARY.md             # Summary document
-├── SEARCH_COMPLETE.md           # Search completion status
+├── FermatSearch.lean            # Fermat search algorithms (new!)
 ├── evolution/
 │   ├── population_db.md         # Population tracking
 │   └── gen1_strategies.md       # Strategy documentation
@@ -603,6 +593,34 @@ problems/fact0rn/
     ├── member_01_semiprime_counting.lean
     └── member_02_reward_function.lean
 ```
+
+## FermatSearch.lean: Factoring Algorithm Formalization
+
+Based on `/home/dclavijo/code/factoring/python/fact0rn_fermat_search_updated.py`, this file formalizes:
+
+### Algorithms Implemented
+
+1. **fermat_search**: Core Fermat factorization (a² - b² = n)
+2. **fermat_candidate**: Check if a value yields valid factorization
+3. **bitlen**: Binary digit length computation
+4. **IsBalancedFactors**: Equal bit length constraint
+
+### Key Theorems
+
+- `fermat_identity`: (a+b)(a-b) = a² - b²
+- `fermat_candidate_correct`: If fermat_candidate returns (p,q), then p*q = n
+- `fact0rn_balanced`: FACT0RN's balanced factor constraint
+- `fermat_efficiency`: Efficiency depends on |p-q|
+- `fermat_complexity_close`: O(|p-q|) when factors are close
+- `fermat_complexity_worst`: O(sqrt(n)) in worst case
+- `fact0rn_security`: Main security theorem
+
+### Key Insight from Python Code
+
+> "Fermat's method is fast only when the two factors are close to sqrt(N).
+> FACT0RN only requires p, q to have the SAME BIT LENGTH — that allows
+> p/q up to ~2x apart, not 'close'. In the worst case, Fermat degenerates
+> to the same O(sqrt(N)) cost as brute-force trial division."
 
 ---
 
